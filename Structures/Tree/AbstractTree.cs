@@ -1,15 +1,15 @@
 ﻿namespace Structures.Tree
 {
-    public abstract class AbstractTree<TKey,TData> where TKey: IComparable<TKey>
+    public abstract class AbstractTree<TKey,TData> where TKey: IComparable<TKey>, IEquatable<TKey>
     {
         protected abstract AbstractTreeNode<TKey, TData>? Root { get; set; }
 
         protected abstract int Size { get; set; }
 
-        public abstract void Add(AbstractTreeNode<TKey, TData> newNode);
+        public abstract void Add(TKey key, TData data);
 
-        public abstract void Remove(AbstractTreeNode<TKey, TData> newNode);
+        public abstract void Remove(TKey key);
         
-        public abstract AbstractTreeNode<TKey, TData> Find(AbstractTreeNode<TKey, TData> newNode);
+        public abstract TData? Find(TKey key);
     }
 }
