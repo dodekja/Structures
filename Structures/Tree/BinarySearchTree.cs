@@ -2,20 +2,34 @@
 {
     public class BinarySearchTree<TKey, TData> : AbstractTree<TKey, TData> where TKey : IComparable<TKey>, IEquatable<TKey>
     {
+        /// <summary>
+        /// Number of items in the tree.
+        /// </summary>
         protected override int Size { get; set; }
 
+        /// <summary>
+        /// Root of the tree.
+        /// </summary>
         protected override AbstractTreeNode<TKey, TData>? Root { get; set; }
 
+        /// <summary>
+        /// Create an empty Binary Search Tree.
+        /// </summary>
         public BinarySearchTree()
         {
             Root = null;
             Size = 0;
         }
 
+        /// <summary>
+        /// Add an item to the tree containing the data given identified by key.
+        /// </summary>
+        /// <param name="key">Key of the new item.</param>
+        /// <param name="data">Data.</param>
+        /// <exception cref="ArgumentException">Thrown when the tree already contains an element with the given key.</exception>
         public override void Add(TKey key, TData data)
         {
             BinaryTreeNode<TKey, TData> newNode = new BinaryTreeNode<TKey, TData>(key, data);
-
 
             BinaryTreeNode<TKey, TData>? actual = null;
             BinaryTreeNode<TKey, TData>? next = (BinaryTreeNode<TKey, TData>?)Root;
@@ -56,14 +70,14 @@
 
         public override void Remove(TKey key)
         {
-            throw new NotFiniteNumberException();
+            throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Find a node with the
+        /// Find an element with the given key.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">Key of the element to find.</param>
+        /// <returns>Data of the element with the given key or null.</returns>
         public override TData? Find(TKey key)
         {
             if (Root != null)
@@ -86,6 +100,10 @@
             return default;
         }
 
+        /// <summary>
+        /// Gets the size of the tree.
+        /// </summary>
+        /// <returns>Number of items in the tree.</returns>
         public int GetSize()
         {
             return Size;
