@@ -1,11 +1,13 @@
-﻿namespace Structures.Tree
+﻿using System.Transactions;
+
+namespace Structures.Tree
 {
     public class BinarySearchTree<TKey, TData> : AbstractTree<TKey, TData> where TKey : IComparable<TKey>, IEquatable<TKey>
     {
         /// <summary>
         /// Number of items in the tree.
         /// </summary>
-        protected override int Size { get; set; }
+        protected override int Count { get; set; }
 
         /// <summary>
         /// Root of the tree.
@@ -18,7 +20,7 @@
         public BinarySearchTree()
         {
             Root = null;
-            Size = 0;
+            Count = 0;
         }
 
         /// <summary>
@@ -65,7 +67,7 @@
                 actual.Children[1] = newNode;
             }
 
-            Size++;
+            Count++;
         }
 
         public override void Remove(TKey key)
@@ -100,13 +102,40 @@
             return default;
         }
 
+        public List<Tuple<TKey, TData?>> InOrder()
+        {
+            List<Tuple<TKey, TData?>> path = new(Count);
+            BinaryTreeNode<TKey,TData>? currentNode = Root as BinaryTreeNode<TKey, TData>;
+
+            if (Root != null)
+            {
+                Stack<BinaryTreeNode<TKey, TData>> stack = new Stack<BinaryTreeNode<TKey, TData>>(Count);
+                while (currentNode != null || stack.Count > 0)
+                {
+                    while (currentNode != null)
+                    {
+                        stack.Push(currentNode);
+                        currentNode = currentNode.GetRightSon();
+                    }
+
+                    currentNode = stack.Pop();
+
+                    path.Add(Tuple.Create(currentNode.Key,currentNode.Data));
+
+                    currentNode = currentNode.GetLeftSon();
+                }
+            }
+
+            return path;
+        }
+
         /// <summary>
         /// Gets the size of the tree.
         /// </summary>
         /// <returns>Number of items in the tree.</returns>
         public int GetSize()
         {
-            return Size;
+            return Count;
         }
     }
 }
