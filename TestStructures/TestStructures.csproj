@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Structures\Structures.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Fixtures\" />
+  </ItemGroup>
+
 </Project>
