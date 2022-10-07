@@ -31,10 +31,10 @@ namespace Structures.Tree
         /// <exception cref="ArgumentException">Thrown when the tree already contains an element with the given key.</exception>
         public override void Add(TKey key, TData data)
         {
-            BinaryTreeNode<TKey, TData> newNode = new BinaryTreeNode<TKey, TData>(key, data);
+            BinaryTreeNode<TKey, TData> newNode = new(key, data);
 
             BinaryTreeNode<TKey, TData>? actual = null;
-            BinaryTreeNode<TKey, TData>? next = (BinaryTreeNode<TKey, TData>?)Root;
+            BinaryTreeNode<TKey, TData>? next = Root as BinaryTreeNode<TKey, TData>;
 
             while (next != null)
             {
@@ -44,10 +44,10 @@ namespace Structures.Tree
                     case 0:
                         throw new ArgumentException("An item with the same key has already been added.");
                     case < 0:
-                        next = next.GetLeftSon();
+                        next = next.GetRightSon();
                         break;
                     default:
-                        next = next.GetRightSon();
+                        next = next.GetLeftSon();
                         break;
                 }
             }
@@ -58,7 +58,7 @@ namespace Structures.Tree
             {
                 Root = newNode;
             }
-            else if (actual.Key.CompareTo(newNode.Key) < 0)
+            else if (actual.Key.CompareTo(newNode.Key) > 0)
             {
                 actual.Children[0] = newNode;
             }
@@ -109,20 +109,20 @@ namespace Structures.Tree
 
             if (Root != null)
             {
-                Stack<BinaryTreeNode<TKey, TData>> stack = new Stack<BinaryTreeNode<TKey, TData>>(Count);
+                Stack<BinaryTreeNode<TKey, TData>> stack = new(Count);
                 while (currentNode != null || stack.Count > 0)
                 {
                     while (currentNode != null)
                     {
                         stack.Push(currentNode);
-                        currentNode = currentNode.GetRightSon();
+                        currentNode = currentNode.GetLeftSon();
                     }
 
                     currentNode = stack.Pop();
 
                     path.Add(Tuple.Create(currentNode.Key,currentNode.Data));
 
-                    currentNode = currentNode.GetLeftSon();
+                    currentNode = currentNode.GetRightSon();
                 }
             }
 

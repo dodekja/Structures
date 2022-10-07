@@ -47,7 +47,7 @@ namespace TestStructures
         public void InOrderTraversalEmpty()
         {
             //Arrange
-            List<Tuple<int, int>>? list;
+            List<Tuple<int, int>>? list = null;
 
             //Act
             list = Tree?.InOrder();
@@ -61,7 +61,7 @@ namespace TestStructures
         {
             //Arrange
             List<Tuple<int, int>>? list = null;
-            Tuple<int, int> expectedItem = new Tuple<int, int>(1,1);
+            Tuple<int, int> expectedItem = new(1,1);
             Tree?.Add(expectedItem.Item1, expectedItem.Item2);
 
             //Act
