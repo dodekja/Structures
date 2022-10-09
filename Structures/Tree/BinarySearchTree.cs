@@ -1,4 +1,7 @@
-﻿using System.Transactions;
+﻿using System.ComponentModel;
+using System.Drawing;
+using System.Reflection.Metadata.Ecma335;
+using System.Transactions;
 
 namespace Structures.Tree
 {
@@ -12,7 +15,7 @@ namespace Structures.Tree
         /// <summary>
         /// Root of the tree.
         /// </summary>
-        protected override AbstractTreeNode<TKey, TData>? Root { get; set; }
+        protected override AbstractTreeNode<TKey, TData?>? Root { get; set; }
 
         /// <summary>
         /// Create an empty Binary Search Tree.
@@ -29,12 +32,12 @@ namespace Structures.Tree
         /// <param name="key">Key of the new item.</param>
         /// <param name="data">Data.</param>
         /// <exception cref="ArgumentException">Thrown when the tree already contains an element with the given key.</exception>
-        public override void Add(TKey key, TData data)
+        public override void Add(TKey key, TData? data)
         {
-            BinaryTreeNode<TKey, TData> newNode = new(key, data);
+            BinaryTreeNode<TKey, TData?> newNode = new(key, data);
 
-            BinaryTreeNode<TKey, TData>? actual = null;
-            BinaryTreeNode<TKey, TData>? next = Root as BinaryTreeNode<TKey, TData>;
+            BinaryTreeNode<TKey, TData?>? actual = null;
+            BinaryTreeNode<TKey, TData?>? next = Root as BinaryTreeNode<TKey, TData?>;
 
             while (next != null)
             {
@@ -42,7 +45,7 @@ namespace Structures.Tree
                 switch (next.Key.CompareTo(newNode.Key))
                 {
                     case 0:
-                        throw new ArgumentException("An item with the same key has already been added.");
+                        throw new ArgumentException($"An item with the key {key} has already been added.");
                     case < 0:
                         next = next.GetRightSon();
                         break;
@@ -70,9 +73,81 @@ namespace Structures.Tree
             Count++;
         }
 
-        public override void Remove(TKey key)
+        public override TData? Remove(TKey key)
         {
-            throw new NotImplementedException();
+            BinaryTreeNode<TKey, TData?>? node = FindNode(key);
+
+            if (node == null)
+            {
+                throw new InvalidOperationException($"Tree does not contain the key {key}");
+            }
+
+            BinaryTreeNode<TKey, TData?>? parent = node.Parent as BinaryTreeNode<TKey,TData?>;
+
+            if (node.GetLeftSon() == null)
+            {
+                ReplaceNodes(node, node.GetRightSon());
+            } 
+            else if (node.GetRightSon() == null)
+            {
+                ReplaceNodes(node, node.GetLeftSon());
+            }
+            else
+            {
+                BinaryTreeNode<TKey, TData?> replacement = Successor(node);
+                if (replacement.Parent != node)
+                {
+                    ReplaceNodes(replacement, replacement.GetRightSon());
+                    replacement.SetRightSon(node.GetRightSon());
+                }
+
+                ReplaceNodes(node, parent);
+                parent.SetLeftSon(node.GetLeftSon());
+            }
+            
+            Count--;
+            return node.Data;
+        }
+
+        private BinaryTreeNode<TKey, TData?> Successor(BinaryTreeNode<TKey, TData?> node)
+        {
+            if (node.HasRightSon())
+            {
+                BinaryTreeNode<TKey, TData?>? successor = node.GetRightSon();
+                while (successor!.GetLeftSon() != null)
+                {
+                    successor = successor.GetLeftSon();
+                }
+            }
+
+            BinaryTreeNode<TKey, TData?>? parent = node.Parent as BinaryTreeNode<TKey, TData?>;
+            while (parent != null && node.IsRightSon())
+            {
+                node = parent;
+                parent = parent.Parent as BinaryTreeNode<TKey,TData?>;
+            }
+
+            return parent!;
+        }
+
+        private void ReplaceNodes(BinaryTreeNode<TKey, TData?> node, BinaryTreeNode<TKey, TData?>? replacement)
+        {
+            if (node.Parent == null)
+            {
+                Root = replacement;
+            } 
+            else
+            {
+                var parent = node.Parent as BinaryTreeNode<TKey, TData?>;
+                if (node.IsLeftSon())
+                {
+                    parent!.SetLeftSon(replacement);
+                }
+                else
+                {
+                    parent!.SetRightSon(replacement);
+                }
+            }
         }
 
         /// <summary>
@@ -84,32 +159,42 @@ namespace Structures.Tree
         {
             if (Root != null)
             {
-                BinaryTreeNode<TKey, TData>? actual = Root as BinaryTreeNode<TKey, TData>;
+                BinaryTreeNode<TKey, TData?>? node = FindNode(key);
 
-                while (actual != null && !actual.Key.Equals(key))
+                if (node != null)
                 {
-                    if (key.CompareTo(actual.Key) < 0)
-                    {
-                        actual = actual.GetLeftSon();
-                    }
-                    else
-                    {
-                        actual = actual.GetRightSon();
-                    }
+                    return node.Data;
                 }
-                if (actual != null) return actual.Data;
             }
             return default;
+        }
+
+        public BinaryTreeNode<TKey, TData?>? FindNode(TKey key)
+        {
+            var actual = Root as BinaryTreeNode<TKey, TData?>;
+
+            while (actual != null && !actual.Key.Equals(key))
+            {
+                if (key.CompareTo(actual.Key) < 0)
+                {
+                    actual = actual.GetLeftSon();
+                }
+                else
+                {
+                    actual = actual.GetRightSon();
+                }
+            }
+            return actual;
         }
 
         public List<Tuple<TKey, TData?>> InOrder()
         {
             List<Tuple<TKey, TData?>> path = new(Count);
-            BinaryTreeNode<TKey,TData>? currentNode = Root as BinaryTreeNode<TKey, TData>;
+            BinaryTreeNode<TKey,TData?>? currentNode = Root as BinaryTreeNode<TKey, TData?>;
 
             if (Root != null)
             {
-                Stack<BinaryTreeNode<TKey, TData>> stack = new(Count);
+                Stack<BinaryTreeNode<TKey, TData?>> stack = new(Count);
                 while (currentNode != null || stack.Count > 0)
                 {
                     while (currentNode != null)

@@ -6,10 +6,10 @@
 
         public TData? Data { get; set; }
 
-        protected internal abstract AbstractTreeNode<TKey, TData>? Parent { get; set; }
+        protected internal abstract AbstractTreeNode<TKey, TData?>? Parent { get; set; }
 
-        protected internal abstract AbstractTreeNode<TKey, TData>?[] Children { get; set; }
+        protected internal abstract AbstractTreeNode<TKey, TData?>?[] Children { get; set; }
 
-        protected internal abstract AbstractTreeNode<TKey,TData>? GetSon(int index);
+        protected internal abstract AbstractTreeNode<TKey,TData?>? GetSon(int index);
     }
 }

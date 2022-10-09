@@ -20,7 +20,7 @@ namespace TestStructures
 
             //Act
             Tree?.Add(item.Item1,item.Item2);
-            treeSize = Tree.GetSize();
+            treeSize = Tree!.GetSize();
 
             //Assert
             Assert.True(treeSize == 1, $"Tree size is {treeSize}, should be 1.");
@@ -31,23 +31,30 @@ namespace TestStructures
         {
             //Arrange
             var item = (1, 1);
-            Tree?.Add(item.Item1, item.Item2);
-            int treeSize = Tree.GetSize();
+            Tree!.Add(item.Item1, item.Item2);
+            int treeSize;
 
 
             //Act
-            Tree.Remove(item.Item1);
+            int data = Tree.Remove(item.Item1);
             treeSize = Tree.GetSize();
 
             //Assert
-            Assert.True(treeSize == 0);
+            Assert.True(treeSize == 0 && data == 1);
+        }
+
+        [Fact]
+        public void RemoveEmptyTree()
+        {
+            //Arrange Act and Assert
+            Assert.Throws<InvalidOperationException>(() => Tree!.Remove(0));
         }
 
         [Fact]
         public void InOrderTraversalEmpty()
         {
             //Arrange
-            List<Tuple<int, int>>? list = null;
+            List<Tuple<int, int>>? list;
 
             //Act
             list = Tree?.InOrder();
@@ -81,10 +88,10 @@ namespace TestStructures
                 Tree?.Add(tuple.Item1,tuple.Item2);
             }
 
-            List<Tuple<int, int>>? actualList = null;
+            List<Tuple<int, int>> actualList;
 
             //Act
-            actualList = Tree?.InOrder();
+            actualList = Tree!.InOrder();
 
             //Assert
             Assert.Equal(expectedList, actualList);
