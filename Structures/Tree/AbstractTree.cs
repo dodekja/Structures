@@ -4,7 +4,7 @@
     {
         protected abstract AbstractTreeNode<TKey, TData?>? Root { get; set; }
 
-        protected abstract int Count { get; set; }
+        public abstract int Count { get; set; }
 
         public abstract void Add(TKey key, TData data);
 

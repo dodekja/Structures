@@ -10,7 +10,7 @@ namespace Structures.Tree
         /// <summary>
         /// Number of items in the tree.
         /// </summary>
-        protected override int Count { get; set; }
+        public override int Count { get; set; }
 
         /// <summary>
         /// Root of the tree.
@@ -83,6 +83,28 @@ namespace Structures.Tree
             }
 
             BinaryTreeNode<TKey, TData?>? parent = node.Parent as BinaryTreeNode<TKey,TData?>;
+            if (node.GetRightSon() == null && node.GetLeftSon() == null)
+            {
+                if (parent == null)
+                {
+                    Root = null;
+                    Count--;
+                    return node.Data;
+                }
+
+                if (node.IsLeftSon())
+                {
+                    parent.SetLeftSon(null);
+                }
+                else
+                {
+                    parent.SetRightSon(null);
+                }
+
+                node.Parent = null;
+                Count--;
+                return node.Data;
+            }
 
             if (node.GetLeftSon() == null)
             {
@@ -94,17 +116,19 @@ namespace Structures.Tree
             }
             else
             {
-                BinaryTreeNode<TKey, TData?> replacement = Successor(node);
-                if (replacement.Parent != node)
+                BinaryTreeNode<TKey, TData?>? successor = Successor(node);
+                if (successor.Parent != node)
                 {
-                    ReplaceNodes(replacement, replacement.GetRightSon());
-                    replacement.SetRightSon(node.GetRightSon());
+                    ReplaceNodes(successor, successor.GetRightSon());
+                    successor.SetRightSon(node.GetRightSon());
+                    successor.GetRightSon().Parent = successor;
                 }
 
-                ReplaceNodes(node, parent);
-                parent.SetLeftSon(node.GetLeftSon());
+                ReplaceNodes(node, successor);
+                successor.SetLeftSon(node.GetLeftSon());
+                successor.GetLeftSon().Parent = successor;
             }
-            
+
             Count--;
             return node.Data;
         }
@@ -113,11 +137,13 @@ namespace Structures.Tree
         {
             if (node.HasRightSon())
             {
-                BinaryTreeNode<TKey, TData?>? successor = node.GetRightSon();
+                BinaryTreeNode<TKey, TData?> successor = node.GetRightSon()!;
                 while (successor!.GetLeftSon() != null)
                 {
                     successor = successor.GetLeftSon();
                 }
+
+                return successor;
             }
 
             BinaryTreeNode<TKey, TData?>? parent = node.Parent as BinaryTreeNode<TKey, TData?>;
@@ -127,7 +153,7 @@ namespace Structures.Tree
                 parent = parent.Parent as BinaryTreeNode<TKey,TData?>;
             }
 
-            return parent!;
+            return node;
         }
 
         private void ReplaceNodes(BinaryTreeNode<TKey, TData?> node, BinaryTreeNode<TKey, TData?>? replacement)
@@ -136,17 +162,22 @@ namespace Structures.Tree
             {
                 Root = replacement;
             } 
+            else if (node.IsLeftSon())
+            {
+                var parent = node.Parent as BinaryTreeNode<TKey, TData?>;
+
+                parent!.SetLeftSon(replacement);
+            }
             else
             {
                 var parent = node.Parent as BinaryTreeNode<TKey, TData?>;
-                if (node.IsLeftSon())
-                {
-                    parent!.SetLeftSon(replacement);
-                }
-                else
-                {
-                    parent!.SetRightSon(replacement);
-                }
+
+                parent!.SetRightSon(replacement);
+            }
+
+            if (replacement != null)
+            {
+                replacement.Parent = node.Parent;
             }
         }
 
