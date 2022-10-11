@@ -197,7 +197,8 @@ namespace Structures.Tree
                     return node.Data;
                 }
             }
-            return default;
+
+            throw new ArgumentException($"Tree does not contain the key {key}");
         }
 
         public BinaryTreeNode<TKey, TData?>? FindNode(TKey key)

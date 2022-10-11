@@ -14,6 +14,71 @@ namespace TestStructures
         }
 
         [Fact]
+        public void FindSingleItem()
+        {
+            //Arrange
+            var item = (1, 1);
+            Tree?.Add(item.Item1, item.Item2);
+
+            //Act
+            var data = Tree.Find(item.Item1);
+
+            //Assert
+            Assert.True(data == 1, $"Item found was {data}, should be {item.Item1}.");
+        }
+        
+        [Fact]
+        public void FindEmptyTree()
+        {
+            //Arrange Act and Assert
+            Assert.Throws<ArgumentException>(() => Tree!.Find(0));
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(10)]
+        [InlineData(100)]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        [InlineData(100000)]
+        public void FindMultipleRandomItems(int count)
+        {
+            //Arrange
+            var generator = new Random();
+            int index;
+            long actualCount = 0;
+            long key;
+            bool found = false;
+            List<long> keysList = new List<long>(count);
+
+            for (long i = 0; i < count; i++)
+            {
+                key = generator.NextInt64();
+                Tree.Add(key, key);
+                keysList.Add(key);
+            }
+
+            //Act
+            for (int i = 0; i < count; i++)
+            {
+                key = keysList[generator.Next(0, keysList.Count)];
+                var data = Tree.Find(key);
+                if (data == key)
+                {
+                    found = true;
+                }
+                else
+                {
+                    found = false;
+                }
+            }
+            
+            //Assert
+            Assert.True(found);
+
+        }
+
+        [Fact]
         public void InsertSingleItem()
         {
             //Arrange
@@ -231,6 +296,10 @@ namespace TestStructures
                 {
                     10000, 5000, 10000, 1
                 },
+                new object[]
+                {
+                    100000, 50000, 100000, 1
+                },
                 
             };
 
@@ -328,9 +397,6 @@ namespace TestStructures
                 {
                     new List<long> {10,50},50
                 },
-
-                
-
             };
 
         public void Dispose()
