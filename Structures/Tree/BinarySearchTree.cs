@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Reflection.Metadata.Ecma335;
 using System.Transactions;
+using System.Xml.Linq;
 
 namespace Structures.Tree
 {
@@ -244,6 +245,60 @@ namespace Structures.Tree
             }
 
             return path;
+        }
+
+        public void RotateNodeLeft(BinaryTreeNode<TKey, TData?> node)
+        {
+            var parent = node.Parent as BinaryTreeNode<TKey, TData?>;
+            var rightSon = node.GetRightSon();
+            node.SetRightSon(rightSon.GetLeftSon());
+
+            if (rightSon.HasLeftSon())
+            {
+                rightSon.GetLeftSon().Parent = node;
+            }
+
+            rightSon.SetLeftSon(node);
+            node.Parent = rightSon;
+            rightSon.Parent = parent;
+            if (parent != null)
+            {
+                if (parent.GetLeftSon() == node)
+                {
+                    parent.SetLeftSon(rightSon);
+                }
+                else
+                {
+                    parent.SetRightSon(rightSon);
+                }
+            }
+        }
+
+        public void RotateNodeRight(BinaryTreeNode<TKey,TData?> node)
+        {
+            var parent = node.Parent as BinaryTreeNode<TKey,TData?>;
+            var leftSon = node.GetLeftSon();
+            node.SetLeftSon(leftSon.GetRightSon());
+
+            if (leftSon.HasRightSon())
+            {
+                leftSon.GetRightSon().Parent = node;
+            }
+
+            leftSon.SetRightSon(node);
+            node.Parent = leftSon;
+            leftSon.Parent = parent;
+            if (parent != null)
+            {
+                if (parent.GetLeftSon() == node)
+                {
+                    parent.SetLeftSon(leftSon);
+                }
+                else
+                {
+                    parent.SetRightSon(leftSon);
+                }
+            }
         }
 
         /// <summary>

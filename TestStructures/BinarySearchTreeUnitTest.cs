@@ -45,8 +45,6 @@ namespace TestStructures
         {
             //Arrange
             var generator = new Random();
-            int index;
-            long actualCount = 0;
             long key;
             bool found = false;
             List<long> keysList = new List<long>(count);
@@ -103,7 +101,7 @@ namespace TestStructures
         {
             //Arrange
             var generator = new Random();
-            int actualCount = 0;
+            int actualCount;
             long key;
 
             //Act
