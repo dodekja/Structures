@@ -83,7 +83,7 @@ namespace Structures.Tree
                 throw new InvalidOperationException($"Tree does not contain the key {key}");
             }
 
-            BinaryTreeNode<TKey, TData?>? parent = node.Parent as BinaryTreeNode<TKey,TData?>;
+            BinaryTreeNode<TKey, TData?>? parent = node.Parent as BinaryTreeNode<TKey, TData?>;
             if (node.GetRightSon() == null && node.GetLeftSon() == null)
             {
                 if (parent == null)
@@ -110,14 +110,14 @@ namespace Structures.Tree
             if (node.GetLeftSon() == null)
             {
                 ReplaceNodes(node, node.GetRightSon());
-            } 
+            }
             else if (node.GetRightSon() == null)
             {
                 ReplaceNodes(node, node.GetLeftSon());
             }
             else
             {
-                BinaryTreeNode<TKey, TData?>? successor = Successor(node);
+                BinaryTreeNode<TKey, TData?>? successor = InOrderSuccessor(node);
                 if (successor.Parent != node)
                 {
                     ReplaceNodes(successor, successor.GetRightSon());
@@ -134,7 +134,7 @@ namespace Structures.Tree
             return node.Data;
         }
 
-        private BinaryTreeNode<TKey, TData?> Successor(BinaryTreeNode<TKey, TData?> node)
+        private BinaryTreeNode<TKey, TData?> InOrderSuccessor(BinaryTreeNode<TKey, TData?> node)
         {
             if (node.HasRightSon())
             {
@@ -151,7 +151,7 @@ namespace Structures.Tree
             while (parent != null && node.IsRightSon())
             {
                 node = parent;
-                parent = parent.Parent as BinaryTreeNode<TKey,TData?>;
+                parent = parent.Parent as BinaryTreeNode<TKey, TData?>;
             }
 
             return node;
@@ -162,7 +162,7 @@ namespace Structures.Tree
             if (node.Parent == null)
             {
                 Root = replacement;
-            } 
+            }
             else if (node.IsLeftSon())
             {
                 var parent = node.Parent as BinaryTreeNode<TKey, TData?>;
@@ -223,7 +223,7 @@ namespace Structures.Tree
         public List<Tuple<TKey, TData?>> InOrder()
         {
             List<Tuple<TKey, TData?>> path = new(Count);
-            BinaryTreeNode<TKey,TData?>? currentNode = Root as BinaryTreeNode<TKey, TData?>;
+            BinaryTreeNode<TKey, TData?>? currentNode = Root as BinaryTreeNode<TKey, TData?>;
 
             if (Root != null)
             {
@@ -238,7 +238,7 @@ namespace Structures.Tree
 
                     currentNode = stack.Pop();
 
-                    path.Add(Tuple.Create(currentNode.Key,currentNode.Data));
+                    path.Add(Tuple.Create(currentNode.Key, currentNode.Data));
 
                     currentNode = currentNode.GetRightSon();
                 }
@@ -274,9 +274,9 @@ namespace Structures.Tree
             }
         }
 
-        public void RotateNodeRight(BinaryTreeNode<TKey,TData?> node)
+        public void RotateNodeRight(BinaryTreeNode<TKey, TData?> node)
         {
-            var parent = node.Parent as BinaryTreeNode<TKey,TData?>;
+            var parent = node.Parent as BinaryTreeNode<TKey, TData?>;
             var leftSon = node.GetLeftSon();
             node.SetLeftSon(leftSon.GetRightSon());
 
