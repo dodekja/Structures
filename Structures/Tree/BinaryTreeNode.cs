@@ -4,7 +4,7 @@
     {
         protected internal override AbstractTreeNode<TKey, TData?>? Parent { get; set; }
         protected internal override AbstractTreeNode<TKey, TData?>?[] Children { get; set; }
-
+        
         public BinaryTreeNode(TKey key, TData data)
         {
             Key = key;
@@ -70,7 +70,7 @@
         public bool IsRightSon()
         {
             var parent = Parent as BinaryTreeNode<TKey, TData?>;
-            return parent != null && parent.GetLeftSon() == this;
+            return parent != null && parent.GetRightSon() == this;
         }
 
         public bool HasRightSon()

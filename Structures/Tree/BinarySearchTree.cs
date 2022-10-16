@@ -1,10 +1,4 @@
-﻿using System.ComponentModel;
-using System.Drawing;
-using System.Reflection.Metadata.Ecma335;
-using System.Transactions;
-using System.Xml.Linq;
-
-namespace Structures.Tree
+﻿namespace Structures.Tree
 {
     public class BinarySearchTree<TKey, TData> : AbstractTree<TKey, TData> where TKey : IComparable<TKey>, IEquatable<TKey>
     {
@@ -249,54 +243,58 @@ namespace Structures.Tree
 
         public void RotateNodeLeft(BinaryTreeNode<TKey, TData?> node)
         {
-            var parent = node.Parent as BinaryTreeNode<TKey, TData?>;
-            var rightSon = node.GetRightSon();
-            node.SetRightSon(rightSon.GetLeftSon());
-
-            if (rightSon.HasLeftSon())
+            if (node.IsRightSon())
             {
-                rightSon.GetLeftSon().Parent = node;
-            }
+                var leftSon = node.GetLeftSon();
+                var parent = node.Parent as BinaryTreeNode<TKey, TData>;
+                var grandParent = parent.Parent as BinaryTreeNode<TKey, TData>;
 
-            rightSon.SetLeftSon(node);
-            node.Parent = rightSon;
-            rightSon.Parent = parent;
-            if (parent != null)
-            {
-                if (parent.GetLeftSon() == node)
+                if (grandParent != null)
                 {
-                    parent.SetLeftSon(rightSon);
+                    if (parent.IsLeftSon())
+                    {
+                        grandParent.SetLeftSon(node);
+                    }
+                    else
+                    {
+                        grandParent.SetRightSon(node);
+                    }
                 }
-                else
+
+                node.SetLeftSon(parent);
+                parent.SetRightSon(leftSon);
+                if (Root == parent)
                 {
-                    parent.SetRightSon(rightSon);
+                    Root = node;
                 }
             }
         }
 
         public void RotateNodeRight(BinaryTreeNode<TKey, TData?> node)
         {
-            var parent = node.Parent as BinaryTreeNode<TKey, TData?>;
-            var leftSon = node.GetLeftSon();
-            node.SetLeftSon(leftSon.GetRightSon());
-
-            if (leftSon.HasRightSon())
+            if (node.IsLeftSon())
             {
-                leftSon.GetRightSon().Parent = node;
-            }
+                var rightSon = node.GetRightSon();
+                var parent = node.Parent as BinaryTreeNode<TKey, TData>;
+                var grandParent = parent.Parent as BinaryTreeNode<TKey, TData>;
 
-            leftSon.SetRightSon(node);
-            node.Parent = leftSon;
-            leftSon.Parent = parent;
-            if (parent != null)
-            {
-                if (parent.GetLeftSon() == node)
+                if (grandParent != null)
                 {
-                    parent.SetLeftSon(leftSon);
+                    if (parent.IsLeftSon())
+                    {
+                        grandParent.SetLeftSon(node);
+                    }
+                    else
+                    {
+                        grandParent.SetRightSon(node);
+                    }
                 }
-                else
+
+                node.SetRightSon(parent);
+                parent.SetLeftSon(rightSon);
+                if (Root == parent)
                 {
-                    parent.SetRightSon(leftSon);
+                    Root = node;
                 }
             }
         }

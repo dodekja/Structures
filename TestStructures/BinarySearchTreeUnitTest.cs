@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Security.Principal;
 using Structures.Tree;
 using TestStructures.Generator;
@@ -14,6 +15,68 @@ namespace TestStructures
         }
 
         [Fact]
+        public void RotateSingleItemLeft()
+        {
+            //Arrange
+            var item = (1, 1);
+            Tree.Add(item.Item1,item.Item2);
+            
+            //Act
+            Tree.RotateNodeLeft(Tree.FindNode(item.Item1));
+
+            //Assert
+            Assert.True(Tree.Count == 1 && Tree.InOrder().Count == 1, $"Expected tree size is 1, actual was {Tree.InOrder().Count}");
+        }
+        
+        [Fact]
+        public void RotateSingleItemRight()
+        {
+            //Arrange
+            var item = (1, 1);
+            Tree.Add(item.Item1,item.Item2);
+            
+            //Act
+            Tree.RotateNodeRight(Tree.FindNode(item.Item1));
+
+            //Assert
+            Assert.True(Tree.Count == 1 && Tree.InOrder().Count == 1, $"Expected tree size is 1, actual was {Tree.InOrder().Count}");
+        }
+
+        [Theory]
+        [MemberData(nameof(MultipleItemRotations))]
+        public void RotateMultipleItemsLeft(int[] keys, int keyToRotate)
+        {
+            //Arrange
+            foreach (var key in keys)
+            {
+                Tree.Add(key,key);
+            }
+
+            //Act
+            Tree.RotateNodeLeft(Tree.FindNode(keyToRotate));
+
+               //Assert
+            Assert.True(Tree.Count == keys.Length && Tree.InOrder().Count == keys.Length, $"Expected tree size is {keys.Length}, actual was {Tree.InOrder().Count}");
+        }
+
+        [Theory]
+        [MemberData(nameof(MultipleItemRotations))]
+        public void RotateMultipleItemsRight(int[] keys, int keyToRotate)
+        {
+            //Arrange
+            foreach (var key in keys)
+            {
+                Tree.Add(key, key);
+            }
+
+            //Act
+            Tree.RotateNodeRight(Tree.FindNode(keyToRotate));
+
+            //Assert
+            Assert.True(Tree.Count == keys.Length && Tree.InOrder().Count == keys.Length, $"Expected tree size is {keys.Length}, actual was {Tree.InOrder().Count}");
+        }
+
+        [Fact]
         public void FindSingleItem()
         {
             //Arrange
@@ -26,6 +89,7 @@ namespace TestStructures
             //Assert
             Assert.True(data == 1, $"Item found was {data}, should be {item.Item1}.");
         }
+
         
         [Fact]
         public void FindEmptyTree()
@@ -250,33 +314,54 @@ namespace TestStructures
             //Arrange
             TreeOperationsGenerator generator;
             generator = new TreeOperationsGenerator(addCount, removeCount, getCount, seed);
-            long countOfOperations = addCount + removeCount + getCount;
             long key = 0;
+            int operationsPerformed = addCount - removeCount;
+
             TreeOperations operation;
             
             //Act
 
-            for (long index = 0; index < countOfOperations; index++)
+            for (long index = 0; index < (addCount + removeCount + getCount); index++)
             {
                 operation = generator.GenerateOperation();
                 switch (operation)
                 {
                     case TreeOperations.Add:
                         key = generator.GenerateKey(operation);
-                        Tree.Add(key, key);
+                        try
+                        {
+                            Tree.Add(key, key);
+                        }
+                        catch (ArgumentException)
+                        {
+                            operationsPerformed--;
+                        }
                         break;
                     case TreeOperations.Remove:
-                        Tree.Remove(generator.GenerateKey(operation));
+                        try
+                        {
+                            Tree.Remove(generator.GenerateKey(operation));
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            operationsPerformed++;
+                        }
                         break;
                     case TreeOperations.Get:
-                        Tree.Find(generator.GenerateKey(operation));
+                        try
+                        {
+                            Tree.Find(generator.GenerateKey(operation));
+                        }
+                        catch (ArgumentException)
+                        {
+                        }
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
-            Assert.True(Tree.Count == addCount - removeCount, $"Actual Count was {Tree.Count}, expected {addCount - removeCount}");
+            Assert.True(Tree.Count == operationsPerformed, $"Actual Count was {Tree.Count}, expected {operationsPerformed}");
         }
 
         public static IEnumerable<object[]> IntegrationTestsData =>
@@ -297,6 +382,10 @@ namespace TestStructures
                 new object[]
                 {
                     100000, 50000, 100000, 1
+                },
+                new object[]
+                {
+                    10000000, 5000000, 10000000, 1
                 },
                 
             };
@@ -394,6 +483,39 @@ namespace TestStructures
                 new object[]
                 {
                     new List<long> {10,50},50
+                },
+            };
+
+        public static IEnumerable<object[]> MultipleItemRotations =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new int[] {1,2},2
+                },
+                new object[]
+                {
+                    new int[] {1,2},1
+                },
+                new object[]
+                {
+                    new int[] {2,1},1
+                },
+                new object[]
+                {
+                    new int[] {2,1},2
+                },
+                new object[]
+                {
+                    new int[] {2,1,3},2
+                },
+                new object[]
+                {
+                    new int[] {2,1,3},1
+                },
+                new object[]
+                {
+                    new int[] {2,1,3},3
                 },
             };
 
