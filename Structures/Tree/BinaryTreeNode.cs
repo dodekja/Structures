@@ -4,6 +4,16 @@
     {
         protected internal override AbstractTreeNode<TKey, TData?>? Parent { get; set; }
         protected internal override AbstractTreeNode<TKey, TData?>?[] Children { get; set; }
+
+        /// <summary>
+        /// Height of left subtree.
+        /// </summary>
+        protected internal int LeftSubtreeHeight { get; set; }
+
+        /// <summary>
+        /// Height of right subtree.
+        /// </summary>
+        protected internal int RightSubtreeHeight { get; set; }
         
         public BinaryTreeNode(TKey key, TData data)
         {
@@ -11,6 +21,8 @@
             Data = data;
             Parent = null;
             Children = new BinaryTreeNode<TKey, TData?>?[2];
+            LeftSubtreeHeight = 0;
+            RightSubtreeHeight = 0;
         }
 
         protected internal override AbstractTreeNode<TKey, TData?>? GetSon(int index)
@@ -35,20 +47,32 @@
 
         public void SetLeftSon(BinaryTreeNode<TKey, TData?>? leftSon)
         {
-            Children[0] = leftSon;
             if (leftSon != null)
             {
                 leftSon.Parent = this;
+                LeftSubtreeHeight = leftSon.LeftSubtreeHeight + leftSon.RightSubtreeHeight + 1;
             }
+            else
+            {
+                LeftSubtreeHeight = 0;
+            }
+            Children[0] = leftSon;
+
         }
 
         public void SetRightSon(BinaryTreeNode<TKey, TData?>? rightSon)
         {
-            Children[1] = rightSon;
             if (rightSon != null)
             {
                 rightSon.Parent = this;
+                RightSubtreeHeight = rightSon.LeftSubtreeHeight + rightSon.RightSubtreeHeight + 1;
             }
+            else
+            {
+                RightSubtreeHeight = 0;
+            }
+            Children[1] = rightSon;
+
         }
 
         public int GetSonsCount()

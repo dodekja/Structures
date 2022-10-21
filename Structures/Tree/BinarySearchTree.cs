@@ -241,6 +241,12 @@
             return path;
         }
 
+        public List<BinaryTreeNode<TKey, TData?>> LevelOrder()
+        {
+            //TODO: Implement level order traversal (should return tree nodes with intact links to parents and sons)
+            throw new NotImplementedException();
+        }
+
         public void RotateNodeLeft(BinaryTreeNode<TKey, TData?> node)
         {
             if (node.IsRightSon())
@@ -275,8 +281,8 @@
             if (node.IsLeftSon())
             {
                 var rightSon = node.GetRightSon();
-                var parent = node.Parent as BinaryTreeNode<TKey, TData>;
-                var grandParent = parent.Parent as BinaryTreeNode<TKey, TData>;
+                BinaryTreeNode<TKey, TData> parent = node.Parent as BinaryTreeNode<TKey, TData>;
+                BinaryTreeNode<TKey, TData>? grandParent = parent.Parent as BinaryTreeNode<TKey, TData>;
 
                 if (grandParent != null)
                 {
@@ -297,6 +303,12 @@
                     Root = node;
                 }
             }
+        }
+
+        public void Balance(BinaryTreeNode<TKey, TData?> node)
+        {
+            //TODO: implement tree balancing algorithm (Try using reverse Level Order with unlimited balance factor?)
+            throw new NotImplementedException();
         }
 
         /// <summary>
