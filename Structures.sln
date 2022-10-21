@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structures", "Structures\St
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestStructures", "TestStructures\TestStructures.csproj", "{2204FE9C-EBC0-49EE-AAF1-BB714B0A8161}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemestralThesisOne", "SemestralThesisOne\SemestralThesisOne.csproj", "{A0EA6B31-1348-4B76-9D80-B3E3E62E409B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,16 @@ Global
 		{2204FE9C-EBC0-49EE-AAF1-BB714B0A8161}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2204FE9C-EBC0-49EE-AAF1-BB714B0A8161}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2204FE9C-EBC0-49EE-AAF1-BB714B0A8161}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17BA6B7B-6CD6-4673-B1EA-0ED0407EC7A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17BA6B7B-6CD6-4673-B1EA-0ED0407EC7A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17BA6B7B-6CD6-4673-B1EA-0ED0407EC7A9}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{17BA6B7B-6CD6-4673-B1EA-0ED0407EC7A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17BA6B7B-6CD6-4673-B1EA-0ED0407EC7A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17BA6B7B-6CD6-4673-B1EA-0ED0407EC7A9}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A0EA6B31-1348-4B76-9D80-B3E3E62E409B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0EA6B31-1348-4B76-9D80-B3E3E62E409B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0EA6B31-1348-4B76-9D80-B3E3E62E409B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0EA6B31-1348-4B76-9D80-B3E3E62E409B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
