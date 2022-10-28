@@ -27,5 +27,11 @@ namespace SemestralThesisOne.Core.Model
             InsuranceCompanyCode = insuranceCompanyCode;
             Hospitalizations = new List<Hospitalization>();
         }
+
+        public override string ToString()
+        {
+            return $"Name: {FirstName} {LastName}, ID: {IdentificationNumber}," +
+                   $" Date of Birth: {DateOfBirth.ToShortDateString()} Insurance: {InsuranceCompanyCode}";
+        }
     }
 }

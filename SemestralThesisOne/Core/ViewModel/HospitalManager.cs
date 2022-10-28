@@ -1,4 +1,7 @@
-﻿using SemestralThesisOne.Core.Database;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Documents;
+using SemestralThesisOne.Core.Database;
 using SemestralThesisOne.Core.Model;
 
 namespace SemestralThesisOne.Core.ViewModel
@@ -18,14 +21,37 @@ namespace SemestralThesisOne.Core.ViewModel
             _hospitals.Add(newHospital);
         }
 
+        public void AddNewRecord(Hospital hospital)
+        {
+            _hospitals.Add(hospital);
+        }
+
         public void AddPatientToHospital(string hospitalName, Patient patient)
         {
             _hospitals.Get(hospitalName).AddPatient(patient);
         }
 
-        public void GetPatientsList()
+        public List<Patient> GetPatientsList(string name)
         {
-            
+            Hospital? hospital = _hospitals.Get(name);
+            List<Tuple<string, Patient>> inOrderList = new List<Tuple<string, Patient>>();
+            if (hospital != null)
+            {
+                inOrderList = hospital.GetAllPatients();
+            }
+
+            List<Patient> patients = new List<Patient>();
+            foreach (var item in inOrderList)
+            {
+                patients.Add(item.Item2);
+            }
+
+            return patients;
+        }
+
+        public List<Hospital> GetAllHospitals()
+        {
+            return _hospitals.GetAllHospitals();
         }
     }
 }

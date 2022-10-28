@@ -13,11 +13,9 @@ namespace SemestralThesisOne.Core.ViewModel
             _patients = new Patients();
         }
 
-        public void AddNewRecord(string firstName, string lastName, string identificationNumber,
-            DateTime dateOfBirth, Enums.InsuranceCompanyCodes insuranceCompanyCode)
+        public void AddNewRecord(Patient patient)
         {
-            Patient newPatient = new Patient(firstName, lastName, identificationNumber, dateOfBirth, insuranceCompanyCode);
-            _patients.Add(newPatient);
+            _patients.Add(patient);
         }
     }
 }

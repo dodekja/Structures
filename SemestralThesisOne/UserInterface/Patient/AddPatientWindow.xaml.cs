@@ -1,11 +1,10 @@
 ﻿using System;
-using SemestralThesisOne.Core.ViewModel;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
+using SemestralThesisOne.Core.ViewModel;
 using static SemestralThesisOne.Core.Enums;
 
-namespace SemestralThesisOne.UserInterface
+namespace SemestralThesisOne.UserInterface.Patient
 {
     /// <summary>
     /// Interaction logic for AddPatientWindow.xaml
@@ -13,9 +12,13 @@ namespace SemestralThesisOne.UserInterface
     public partial class AddPatientWindow : Window
     {
         private PatientManager _patientManager;
-        public AddPatientWindow(PatientManager patientManager)
+
+        private HospitalManager _hospitalManager;
+
+        public AddPatientWindow(PatientManager patientManager, HospitalManager hospitalManager)
         { 
             _patientManager = patientManager;
+            _hospitalManager = hospitalManager;
             InitializeComponent();
         }
 
@@ -43,8 +46,9 @@ namespace SemestralThesisOne.UserInterface
             {
                 try
                 {
-                    _patientManager.AddNewRecord(FirstNameTextBox.Text, LastNameTextBox.Text,
-                        IdentificationNumberTextBox.Text, DateOfBirthDatePicker.SelectedDate.Value, code.Value);
+                    Core.Model.Patient newPatient = new Core.Model.Patient(FirstNameTextBox.Text, LastNameTextBox.Text, IdentificationNumberTextBox.Text, DateOfBirthDatePicker.SelectedDate.Value, code.Value);
+                    _patientManager.AddNewRecord(newPatient);
+                    _hospitalManager.AddPatientToHospital(HospitalNameTextBox.Text, newPatient);
                 }
                 catch (ArgumentException argumentException)
                 {

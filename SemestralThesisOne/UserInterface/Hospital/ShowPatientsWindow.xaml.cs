@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using SemestralThesisOne.Core.ViewModel;
 
 namespace SemestralThesisOne.UserInterface.Hospital
@@ -18,7 +19,20 @@ namespace SemestralThesisOne.UserInterface.Hospital
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
-            //var patientsList = hospitalManager.
+            try
+            {
+                var patientsList = hospitalManager.GetPatientsList(NameTextBox.Text);
+                foreach (var patient in patientsList)
+                {
+                    PatientsTextBlock.Text += patient.ToString() + "\n";
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            
         }
     }
 }

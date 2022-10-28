@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using SemestralThesisOne.Core.ViewModel;
 
 namespace SemestralThesisOne.UserInterface.Hospital
@@ -38,7 +27,7 @@ namespace SemestralThesisOne.UserInterface.Hospital
                 }
                 catch (ArgumentException argumentException)
                 {
-                    MessageBox.Show("Patient already exists", "Error",
+                    MessageBox.Show("Hospital already exists", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }

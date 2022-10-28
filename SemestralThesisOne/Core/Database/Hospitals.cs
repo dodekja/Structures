@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Windows.Documents;
 using SemestralThesisOne.Core.Model;
 using Structures.Tree;
 
@@ -27,6 +29,18 @@ namespace SemestralThesisOne.Core.Database
             }
 
             throw new InvalidOperationException($"Hospital with the name {name} does not exist.");
+        }
+
+        public List<Hospital> GetAllHospitals()
+        {
+            var inorder = _tree.InOrder();
+            List<Hospital> hospitals = new List<Hospital>();
+            foreach (var tuple in inorder)
+            {
+                hospitals.Add(tuple.Item2);
+            }
+
+            return hospitals;
         }
     }
 }

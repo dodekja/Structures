@@ -7,25 +7,35 @@ using System.Threading.Tasks;
 
 namespace SemestralThesisOne.Core.Model
 {
-    internal class Hospital
+    public class Hospital
     {
         public string Name { get; set; }
 
         private BinarySearchTree<string, Patient> _patientsById;
 
         //TODO: Change this to the augmented BST
-        public List<Hospitalization> Hospitalizations { get; set; }
+        public BinarySearchTree<string,Hospitalization> Hospitalizations { get; set; }
 
         public Hospital(string name)
         {
             Name = name;
-            Hospitalizations = new List<Hospitalization>();
+            Hospitalizations = new BinarySearchTree<string, Hospitalization>();
             _patientsById = new BinarySearchTree<string, Patient>();
         }
 
         public void AddPatient(Patient patient)
         {
             _patientsById.Add(patient.IdentificationNumber,patient);
+        }
+
+        public List<Tuple<string,Patient>> GetAllPatients()
+        {
+            return _patientsById.InOrder();
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }
