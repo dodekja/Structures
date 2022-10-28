@@ -243,8 +243,26 @@
 
         public List<BinaryTreeNode<TKey, TData?>> LevelOrder()
         {
-            //TODO: Implement level order traversal (should return tree nodes with intact links to parents and sons)
-            throw new NotImplementedException();
+            List<BinaryTreeNode<TKey, TData?>> nodes = new List<BinaryTreeNode<TKey, TData?>>(Count);
+            if (Root != null)
+            {
+                Queue<BinaryTreeNode<TKey, TData?>> level = new Queue<BinaryTreeNode<TKey, TData?>>();
+                level.Enqueue((Root as BinaryTreeNode<TKey,TData?>)!);
+                BinaryTreeNode<TKey, TData?> node;
+                while (level.Count > 0)
+                {
+                    node = level.Dequeue();
+                    nodes.Add(node);
+                    foreach (AbstractTreeNode<TKey, TData?>? child in node.Children)
+                    {
+                        if (child != null)
+                        {
+                            level.Enqueue(child as BinaryTreeNode<TKey,TData?>);
+                        }
+                    }
+                }
+            }
+            return nodes;
         }
 
         public void RotateNodeLeft(BinaryTreeNode<TKey, TData?> node)

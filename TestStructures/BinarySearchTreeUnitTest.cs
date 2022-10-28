@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Security.Principal;
 using Structures.Tree;
 using TestStructures.Generator;
 
@@ -274,6 +272,66 @@ namespace TestStructures
         }
 
         [Fact]
+        public void LevelOrderTraversalEmpty()
+        {
+            //Arrange
+            List<BinaryTreeNode<long,long>> list;
+
+            //Act
+            list = Tree?.LevelOrder();
+
+            //Assert
+            Assert.True(list is { Count: 0 });
+        }
+        
+        [Fact]
+        public void LevelOrderTraversalSingleItem()
+        {
+            //Arrange
+            List<BinaryTreeNode<long,long>> list;
+            Tree.Add(1,1);
+
+            //Act
+            list = Tree?.LevelOrder();
+
+            //Assert
+            Assert.True(list is { Count: 1 });
+        }
+        
+        [Theory]
+        [MemberData(nameof(LevelOrderTraversalMultipleItemsData))]
+        public void LevelOrderTraversalMultipleItems(List<BinaryTreeNode<long, long>> itemsToInsert, List<BinaryTreeNode<long, long>> expectedList)
+        {
+            //Arrange
+            List<BinaryTreeNode<long,long>> actualList;
+            foreach (BinaryTreeNode<long, long> item in itemsToInsert)
+            {
+                Tree.Add(item.Key,item.Data);
+            }
+
+            //Act
+            actualList = Tree?.LevelOrder();
+
+
+            //Assert
+            bool equals = true;
+            int index;
+            for (index = 0; index < actualList.Count; index++)
+            {
+                if (actualList[index].Key == expectedList[index].Key)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals,$"The actual list differs from the expected at index {index}.");
+        }
+
+        [Fact]
         public void InOrderTraversalSingleItem()
         {
             //Arrange
@@ -405,8 +463,29 @@ namespace TestStructures
                 },
                 new object[] {new List<Tuple<long,long>> {new(30,30), new(20,20), new(40,40), new(15,15), new(25,25), new(35,35), new(50,50),
                         new(5, 5), new(18, 18), new(45, 45), new(60, 60) },
-                    new List<Tuple<long,long>> {new(5,5), new(15,15), new(18,18), new(20,20), new(25,25), new(30,30), new(35,35),
+                    new List<Tuple<long, long>> {new(5,5), new(15,15), new(18,18), new(20,20), new(25,25), new(30,30), new(35,35),
                         new(40, 40), new(45, 45), new(50, 50), new(60, 60) }
+                },
+
+            };
+
+        public static IEnumerable<object[]> LevelOrderTraversalMultipleItemsData =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new List<BinaryTreeNode<long,long>> {new(5,5), new(10,10), new(11,11), new(20,20), new(30,30), new(40,40), new(45,45)},
+                    new List<BinaryTreeNode<long,long>> {new(5,5), new(10,10), new(11,11), new(20,20), new(30,30), new(40,40), new(45,45)}
+                },
+                new object[] {new List<BinaryTreeNode<long,long>> {new(5,5), new(15,15), new(18,18), new(20,20), new(25,25), new(30,30), new(35,35),
+                        new(40, 40), new(45, 45), new(50, 50), new(60, 60) },
+                    new List<BinaryTreeNode<long,long>> {new(5,5), new(15,15), new(18,18), new(20,20), new(25,25), new(30,30), new(35,35),
+                        new(40, 40), new(45, 45), new(50, 50), new(60, 60) }
+                },
+                new object[] {new List<BinaryTreeNode<long,long>> {new(30,30), new(20,20), new(40,40), new(15,15), new(25,25), new(35,35), new(50,50),
+                        new(5, 5), new(18, 18), new(45, 45), new(60, 60) },
+                    new List<BinaryTreeNode<long,long>> {new(30,30), new(20,20), new(40,40), new(15,15), new(25,25), new(35,35), new(50,50),
+                        new(5, 5), new(18, 18), new(45, 45), new(60, 60) }
                 },
 
             };
