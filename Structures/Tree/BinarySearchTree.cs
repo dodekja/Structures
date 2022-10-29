@@ -1,4 +1,6 @@
-﻿namespace Structures.Tree
+﻿using System.ComponentModel.Design;
+
+namespace Structures.Tree
 {
     public class BinarySearchTree<TKey, TData> : AbstractTree<TKey, TData> where TKey : IComparable<TKey>, IEquatable<TKey>
     {
@@ -34,6 +36,8 @@
             BinaryTreeNode<TKey, TData?>? actual = null;
             BinaryTreeNode<TKey, TData?>? next = Root as BinaryTreeNode<TKey, TData?>;
 
+            Stack<(BinaryTreeNode<TKey, TData?>, bool)> updateSubtree = new();
+
             while (next != null)
             {
                 actual = next;
@@ -43,9 +47,12 @@
                         throw new ArgumentException($"An item with the key {key} has already been added.");
                     case < 0:
                         next = next.GetRightSon();
+                        updateSubtree.Push(new(actual, false));
+
                         break;
                     default:
                         next = next.GetLeftSon();
+                        updateSubtree.Push(new(actual, true));
                         break;
                 }
             }
@@ -63,6 +70,19 @@
             else
             {
                 actual.Children[1] = newNode;
+            }
+
+            while (updateSubtree.Count > 0)
+            {
+                var item = updateSubtree.Pop();
+                if (item.Item2)
+                {
+                    item.Item1.IncrementLeftSubtree();
+                }
+                else
+                {
+                    item.Item1.IncrementRightSubtree();
+                }
             }
 
             Count++;
@@ -247,7 +267,7 @@
             if (Root != null)
             {
                 Queue<BinaryTreeNode<TKey, TData?>> level = new Queue<BinaryTreeNode<TKey, TData?>>();
-                level.Enqueue((Root as BinaryTreeNode<TKey,TData?>)!);
+                level.Enqueue((Root as BinaryTreeNode<TKey, TData?>)!);
                 BinaryTreeNode<TKey, TData?> node;
                 while (level.Count > 0)
                 {
@@ -257,7 +277,7 @@
                     {
                         if (child != null)
                         {
-                            level.Enqueue(child as BinaryTreeNode<TKey,TData?>);
+                            level.Enqueue(child as BinaryTreeNode<TKey, TData?>);
                         }
                     }
                 }
@@ -290,7 +310,10 @@
                 if (Root == parent)
                 {
                     Root = node;
+                    node.Parent = null;
                 }
+
+                node.LeftSubtreeHeight = parent.LeftSubtreeHeight + parent.RightSubtreeHeight + 1;
             }
         }
 
@@ -319,15 +342,61 @@
                 if (Root == parent)
                 {
                     Root = node;
+                    node.Parent = null;
+                }
+
+                node.RightSubtreeHeight = parent.LeftSubtreeHeight + parent.RightSubtreeHeight + 1;
+            }
+        }
+
+        public void Balance()
+        {
+            List<BinaryTreeNode<TKey, TData?>> nodes = LevelOrder();
+            nodes.Reverse();
+            foreach (BinaryTreeNode<TKey, TData?> node in nodes)
+            {
+                if (!node.HasLeftSon() && !node.HasRightSon())
+                {
+                    continue;
+                }
+
+                int subtreeDifference = node.GetSubtreeDifference();
+
+                if (subtreeDifference == 1 || subtreeDifference == -1 || subtreeDifference == 0)
+                {
+                    continue;
+                }
+
+                if (subtreeDifference < -1)
+                {
+                    while (node.GetSubtreeDifference() < -1)
+                    {
+                        RotateNodeRight(node.GetLeftSon());
+                    }
+                }
+                else
+                {
+                    while (node.GetSubtreeDifference() > 1)
+                    {
+                        RotateNodeLeft(node.GetRightSon());
+                    }
+                }
+            }
+
+            var curRoot = Root as BinaryTreeNode<TKey, TData?>;
+            if (curRoot != null)
+            {
+                if (curRoot.GetSubtreeDifference() < -1)
+                {
+                    RotateNodeRight(curRoot.GetLeftSon());
+                }
+                else if (curRoot.GetSubtreeDifference() > 1)
+                {
+                    RotateNodeLeft(curRoot.GetRightSon());
                 }
             }
         }
 
-        public void Balance(BinaryTreeNode<TKey, TData?> node)
-        {
-            //TODO: implement tree balancing algorithm (Try using reverse Level Order with unlimited balance factor?)
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// Gets the size of the tree.

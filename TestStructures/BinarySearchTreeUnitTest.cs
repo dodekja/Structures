@@ -1,4 +1,5 @@
 using Structures.Tree;
+using System.Xml.Linq;
 using TestStructures.Generator;
 
 namespace TestStructures
@@ -17,22 +18,22 @@ namespace TestStructures
         {
             //Arrange
             var item = (1, 1);
-            Tree.Add(item.Item1,item.Item2);
-            
+            Tree.Add(item.Item1, item.Item2);
+
             //Act
             Tree.RotateNodeLeft(Tree.FindNode(item.Item1));
 
             //Assert
             Assert.True(Tree.Count == 1 && Tree.InOrder().Count == 1, $"Expected tree size is 1, actual was {Tree.InOrder().Count}");
         }
-        
+
         [Fact]
         public void RotateSingleItemRight()
         {
             //Arrange
             var item = (1, 1);
-            Tree.Add(item.Item1,item.Item2);
-            
+            Tree.Add(item.Item1, item.Item2);
+
             //Act
             Tree.RotateNodeRight(Tree.FindNode(item.Item1));
 
@@ -47,13 +48,13 @@ namespace TestStructures
             //Arrange
             foreach (var key in keys)
             {
-                Tree.Add(key,key);
+                Tree.Add(key, key);
             }
 
             //Act
             Tree.RotateNodeLeft(Tree.FindNode(keyToRotate));
 
-               //Assert
+            //Assert
             Assert.True(Tree.Count == keys.Length && Tree.InOrder().Count == keys.Length, $"Expected tree size is {keys.Length}, actual was {Tree.InOrder().Count}");
         }
 
@@ -88,7 +89,7 @@ namespace TestStructures
             Assert.True(data == 1, $"Item found was {data}, should be {item.Item1}.");
         }
 
-        
+
         [Fact]
         public void FindEmptyTree()
         {
@@ -132,7 +133,7 @@ namespace TestStructures
                     found = false;
                 }
             }
-            
+
             //Assert
             Assert.True(found);
 
@@ -170,7 +171,7 @@ namespace TestStructures
             for (long i = 0; i < count; i++)
             {
                 key = generator.NextInt64();
-                Tree.Add(key,key);
+                Tree.Add(key, key);
             }
             actualCount = Tree.InOrder().Count();
 
@@ -275,7 +276,7 @@ namespace TestStructures
         public void LevelOrderTraversalEmpty()
         {
             //Arrange
-            List<BinaryTreeNode<long,long>> list;
+            List<BinaryTreeNode<long, long>> list;
 
             //Act
             list = Tree?.LevelOrder();
@@ -283,13 +284,13 @@ namespace TestStructures
             //Assert
             Assert.True(list is { Count: 0 });
         }
-        
+
         [Fact]
         public void LevelOrderTraversalSingleItem()
         {
             //Arrange
-            List<BinaryTreeNode<long,long>> list;
-            Tree.Add(1,1);
+            List<BinaryTreeNode<long, long>> list;
+            Tree.Add(1, 1);
 
             //Act
             list = Tree?.LevelOrder();
@@ -297,16 +298,16 @@ namespace TestStructures
             //Assert
             Assert.True(list is { Count: 1 });
         }
-        
+
         [Theory]
         [MemberData(nameof(LevelOrderTraversalMultipleItemsData))]
         public void LevelOrderTraversalMultipleItems(List<BinaryTreeNode<long, long>> itemsToInsert, List<BinaryTreeNode<long, long>> expectedList)
         {
             //Arrange
-            List<BinaryTreeNode<long,long>> actualList;
+            List<BinaryTreeNode<long, long>> actualList;
             foreach (BinaryTreeNode<long, long> item in itemsToInsert)
             {
-                Tree.Add(item.Key,item.Data);
+                Tree.Add(item.Key, item.Data);
             }
 
             //Act
@@ -328,7 +329,7 @@ namespace TestStructures
                     break;
                 }
             }
-            Assert.True(equals,$"The actual list differs from the expected at index {index}.");
+            Assert.True(equals, $"The actual list differs from the expected at index {index}.");
         }
 
         [Fact]
@@ -376,7 +377,7 @@ namespace TestStructures
             int operationsPerformed = addCount - removeCount;
 
             TreeOperations operation;
-            
+
             //Act
 
             for (long index = 0; index < (addCount + removeCount + getCount); index++)
@@ -422,6 +423,58 @@ namespace TestStructures
             Assert.True(Tree.Count == operationsPerformed, $"Actual Count was {Tree.Count}, expected {operationsPerformed}");
         }
 
+        [Fact]
+        public void BalanceEmptyTree()
+        {
+            //Arrange
+            Exception? ex;
+
+            //Act
+            ex = Record.Exception(() => Tree.Balance());
+
+            //Assert
+            Assert.Null(ex);
+        }
+
+        [Theory]
+        [MemberData(nameof(BalanceTreeData))]
+        public void BalanceTreeManualInput(List<BinaryTreeNode<long, long>> insertNodes, List<long> expectedKeysOrder)
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>> actualList;
+            foreach (BinaryTreeNode<long, long> item in insertNodes)
+            {
+                Tree.Add(item.Key, item.Data);
+            }
+
+            //Act
+            Tree.Balance();
+            actualList = Tree?.LevelOrder();
+
+            //Assert
+            bool equals = true;
+            int index;
+            for (index = 0; index < actualList.Count; index++)
+            {
+                if (actualList[index].Key == expectedKeysOrder[index])
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+
+            Assert.True(equals, $"Actual and expected lists differ at index {index}");
+        }
+
+        public void BalanceTreeGeneratedInput()
+        {
+
+        }
+
         public static IEnumerable<object[]> IntegrationTestsData =>
             new List<object[]>
             {
@@ -445,7 +498,7 @@ namespace TestStructures
                 {
                     10000000, 5000000, 10000000, 1
                 },
-                
+
             };
 
         public static IEnumerable<object[]> InOrderTraversalMultipleItemsData =>
@@ -467,6 +520,26 @@ namespace TestStructures
                         new(40, 40), new(45, 45), new(50, 50), new(60, 60) }
                 },
 
+            };
+
+        public static IEnumerable<object[]> BalanceTreeData =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new List<BinaryTreeNode<long,long>> {new(5,5), new(10,10), new(11,11), new(20,20), new(30,30), new(40,40), new(45,45)},
+                    new List<long> {20,10,40,5,11,30,45}
+                },
+                new object[]
+                {
+                    new List<BinaryTreeNode<long,long>> {new(45,45), new(40, 40), new(30, 30), new(20, 20), new(11, 11), new(10, 10), new(5,5) },
+                    new List<long> {20,10,40,5,11,30,45}
+                },
+                new object[]
+                {
+                    new List<BinaryTreeNode<long,long>> {new(45,45), new(5, 5), new(40, 40), new(10, 10), new(30, 30), new(11, 11), new(20, 20)   },
+                    new List<long> {11,5,30,10,20,45,40}
+                },
             };
 
         public static IEnumerable<object[]> LevelOrderTraversalMultipleItemsData =>

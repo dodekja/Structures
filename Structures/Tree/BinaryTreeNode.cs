@@ -47,6 +47,10 @@
 
         public void SetLeftSon(BinaryTreeNode<TKey, TData?>? leftSon)
         {
+            if (Children[0] != null)
+            {
+                LeftSubtreeHeight = 0;
+            }
             if (leftSon != null)
             {
                 leftSon.Parent = this;
@@ -62,6 +66,10 @@
 
         public void SetRightSon(BinaryTreeNode<TKey, TData?>? rightSon)
         {
+            if (Children[1] != null)
+            {
+                RightSubtreeHeight = 0;
+            }
             if (rightSon != null)
             {
                 rightSon.Parent = this;
@@ -100,6 +108,25 @@
         public bool HasRightSon()
         {
             return Children[1] != null;
+        }
+
+        /// <summary>
+        /// Get the difference between the left and right subtree.
+        /// </summary>
+        /// <returns>Negative value if left subtree is bigger, 0 if subtrees are equal and positive value if right subtree is bigger.</returns>
+        public int GetSubtreeDifference()
+        {
+            return  RightSubtreeHeight - LeftSubtreeHeight;
+        }
+
+        public void IncrementLeftSubtree()
+        {
+            LeftSubtreeHeight++;
+        }
+
+        public void IncrementRightSubtree()
+        {
+            RightSubtreeHeight++;
         }
     }
 }
