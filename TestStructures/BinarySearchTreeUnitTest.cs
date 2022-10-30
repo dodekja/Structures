@@ -156,6 +156,53 @@ namespace TestStructures
         }
 
         [Theory]
+        [InlineData(10,0)]
+        [InlineData(100,0)]
+        [InlineData(1000,0)]
+        [InlineData(10000,0)]
+        [InlineData(100000,0)]
+        [InlineData(1000000,0)]
+        [InlineData(10000000,0)]
+        public void InsertWithBalance(int countOfNodes, int? seed)
+        {
+            //Arrange && Act
+            List<BinaryTreeNode<long, long>> actualList = new List<BinaryTreeNode<long, long>>(countOfNodes);
+            Random random = new Random(seed ?? 0);
+            for (int index = 0; index < countOfNodes; index++)
+            {
+                int number = random.Next();
+                try
+                {
+                    Tree.AddWithBalance(number, number);
+                }
+                catch (Exception e)
+                {
+                    index--;
+                }
+            }
+
+            //Assert
+            actualList = Tree.LevelOrder();
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
+            {
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
+        }
+
+        [Theory]
         [InlineData(10)]
         [InlineData(100)]
         [InlineData(1000)]

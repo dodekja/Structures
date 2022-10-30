@@ -23,13 +23,15 @@ namespace Structures.Tree
             Count = 0;
         }
 
+
         /// <summary>
         /// Add an item to the tree containing the data given identified by key.
         /// </summary>
         /// <param name="key">Key of the new item.</param>
         /// <param name="data">Data.</param>
+        /// <param name="stack"></param>
         /// <exception cref="ArgumentException">Thrown when the tree already contains an element with the given key.</exception>
-        public override void Add(TKey key, TData? data)
+        private void Add(TKey key, TData? data, bool balance)
         {
             BinaryTreeNode<TKey, TData?> newNode = new(key, data);
 
@@ -75,17 +77,82 @@ namespace Structures.Tree
             while (updateSubtree.Count > 0)
             {
                 var item = updateSubtree.Pop();
+                BinaryTreeNode<TKey, TData?> node = item.Item1;
+                int subtreeDifference = node.GetSubtreeDifference();
+
+                //Without this condition, the difference in subtree sizes is smaller but
+                //the execution time is longer
+                if (subtreeDifference == 0)
+                {
+                    balance = false;
+                }
+
                 if (item.Item2)
                 {
-                    item.Item1.IncrementLeftSubtree();
+                    node.IncrementLeftSubtree();
+                    if (balance)
+                    {
+                        if (subtreeDifference == 1 || subtreeDifference == -1)
+                        {
+                            continue;
+                        }
+
+                        if (subtreeDifference < -1)
+                        {
+                            if (node.GetSubtreeDifference() < -1)
+                            {
+                                RotateNodeRight(node.GetLeftSon());
+                            }
+                        }
+                        else
+                        {
+                            if (node.GetSubtreeDifference() > 1)
+                            {
+                                RotateNodeLeft(node.GetRightSon());
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    item.Item1.IncrementRightSubtree();
+                    node.IncrementRightSubtree();
+                    if (balance)
+                    {
+                        if (subtreeDifference == 1 || subtreeDifference == -1)
+                        {
+                            continue;
+                        }
+
+                        if (subtreeDifference < -1)
+                        {
+                            if (node.GetSubtreeDifference() < -1)
+                            {
+                                RotateNodeRight(node.GetLeftSon());
+                            }
+                        }
+                        else
+                        {
+                            if (node.GetSubtreeDifference() > 1)
+                            {
+                                RotateNodeLeft(node.GetRightSon());
+                            }
+                        }
+                    }
                 }
             }
 
             Count++;
+        }
+
+        public override void Add(TKey key, TData? data)
+        {
+            Add(key, data, false);
+        }
+
+        public void AddWithBalance(TKey key, TData? data)
+        {
+            Stack<BinaryTreeNode<TKey, TData?>>? path = new Stack<BinaryTreeNode<TKey, TData?>>();
+            Add(key, data, true);
         }
 
         public override TData? Remove(TKey key)
