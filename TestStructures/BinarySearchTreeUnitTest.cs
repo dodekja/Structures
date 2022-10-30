@@ -1,4 +1,5 @@
 using Structures.Tree;
+using System;
 using System.Xml.Linq;
 using TestStructures.Generator;
 
@@ -371,8 +372,7 @@ namespace TestStructures
         public void IntegrationTests(int addCount, int removeCount, int getCount, int? seed = null)
         {
             //Arrange
-            TreeOperationsGenerator generator;
-            generator = new TreeOperationsGenerator(addCount, removeCount, getCount, seed);
+            var generator = new TreeOperationsGenerator(addCount, removeCount, getCount, seed);
             long key = 0;
             int operationsPerformed = addCount - removeCount;
 
@@ -453,10 +453,12 @@ namespace TestStructures
 
             //Assert
             bool equals = true;
-            int index;
-            for (index = 0; index < actualList.Count; index++)
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
             {
-                if (actualList[index].Key == expectedKeysOrder[index])
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
                 {
                     equals = true;
                 }
@@ -466,12 +468,56 @@ namespace TestStructures
                     break;
                 }
             }
-
-            Assert.True(equals, $"Actual and expected lists differ at index {index}");
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
         }
 
-        public void BalanceTreeGeneratedInput()
+        [Theory]
+        [InlineData(10,0)]
+        [InlineData(100,0)]
+        [InlineData(1000,0)]
+        [InlineData(10000,0)]
+        [InlineData(100000,0)]
+        [InlineData(1000000,0)]
+        public void BalanceTreeGeneratedInput(int countOfNodes, int? seed)
         {
+            //Arrange
+            List<BinaryTreeNode<long, long>> actualList = new List<BinaryTreeNode<long, long>>(countOfNodes);
+            Random random = new Random(seed ?? 0);
+            for (int index = 0; index < countOfNodes; index++)
+            {
+                int number = random.Next();
+                try
+                {
+                    Tree.Add(number, number);
+                }
+                catch (Exception e)
+                {
+                    index--;
+                }
+            }
+
+            //Act
+            Tree.Balance();
+            actualList = Tree?.LevelOrder();
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
+            {
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
 
         }
 
