@@ -157,7 +157,18 @@ namespace Structures.Tree
 
         public override TData? Remove(TKey key)
         {
+            return Remove(key, false);
+        }
+
+        public TData? RemoveWithBalance(TKey key)
+        {
+            return Remove(key, true);
+        }
+
+        private TData? Remove(TKey key, bool balance)
+        {
             BinaryTreeNode<TKey, TData?>? node = FindNode(key);
+            Stack<(BinaryTreeNode<TKey, TData?>, bool)> updateSubtree = new();
 
             if (node == null)
             {
@@ -181,6 +192,33 @@ namespace Structures.Tree
                 else
                 {
                     parent.SetRightSon(null);
+                }
+
+                var child = node;
+                while (parent != null)
+                {
+                    if (child.IsLeftSon())
+                    {
+                        parent.LeftSubtreeHeight--;
+                    }
+                    else
+                    {
+                        parent.RightSubtreeHeight--;
+                    }
+                    if (balance)
+                    {
+                        int subtreeDifference = parent.GetSubtreeDifference();
+                        if (subtreeDifference < -1)
+                        {
+                            RotateNodeRight(parent.GetLeftSon());
+                        }
+                        else
+                        {
+                            RotateNodeLeft(parent.GetRightSon());
+                        }
+                    }
+                    child = parent;
+                    parent = parent.Parent as BinaryTreeNode<TKey, TData?>;
                 }
 
                 node.Parent = null;
@@ -211,6 +249,32 @@ namespace Structures.Tree
                 successor.GetLeftSon().Parent = successor;
             }
 
+            var childNode = node;
+            while (parent != null)
+            {
+                if (childNode.IsLeftSon())
+                {
+                    parent.LeftSubtreeHeight--;
+                }
+                else
+                {
+                    parent.RightSubtreeHeight--;
+                }
+                if (balance)
+                {
+                    int subtreeDifference = parent.GetSubtreeDifference();
+                    if (subtreeDifference < -1)
+                    {
+                        RotateNodeRight(parent.GetLeftSon());
+                    }
+                    else
+                    {
+                        RotateNodeLeft(parent.GetRightSon());
+                    }
+                }
+                childNode = parent;
+                parent = parent.Parent as BinaryTreeNode<TKey, TData?>;
+            }
             Count--;
             return node.Data;
         }
