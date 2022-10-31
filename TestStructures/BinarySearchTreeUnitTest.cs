@@ -1,6 +1,4 @@
 using Structures.Tree;
-using System;
-using System.Xml.Linq;
 using TestStructures.Generator;
 
 namespace TestStructures
@@ -175,7 +173,7 @@ namespace TestStructures
                 {
                     Tree.AddWithBalance(number, number);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     index--;
                 }
@@ -277,7 +275,7 @@ namespace TestStructures
         [InlineData(1000)]
         [InlineData(10000)]
         [InlineData(50000)]
-        public void RemoveMutlipleRandomItems(int count)
+        public void RemoveMultipleRandomItems(int count)
         {
             //Arrange
             var generator = new Random();
@@ -620,7 +618,7 @@ namespace TestStructures
                 {
                     Tree.Add(number, number);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     index--;
                 }
@@ -819,31 +817,31 @@ namespace TestStructures
             {
                 new object[]
                 {
-                    new int[] {1,2},2
+                    new[] {1,2},2
                 },
                 new object[]
                 {
-                    new int[] {1,2},1
+                    new[] {1,2},1
                 },
                 new object[]
                 {
-                    new int[] {2,1},1
+                    new[] {2,1},1
                 },
                 new object[]
                 {
-                    new int[] {2,1},2
+                    new[] {2,1},2
                 },
                 new object[]
                 {
-                    new int[] {2,1,3},2
+                    new[] {2,1,3},2
                 },
                 new object[]
                 {
-                    new int[] {2,1,3},1
+                    new[] {2,1,3},1
                 },
                 new object[]
                 {
-                    new int[] {2,1,3},3
+                    new[] {2,1,3},3
                 },
             };
 
