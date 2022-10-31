@@ -470,6 +470,89 @@ namespace TestStructures
             Assert.True(Tree.Count == operationsPerformed, $"Actual Count was {Tree.Count}, expected {operationsPerformed}");
         }
 
+        [Theory]
+        [MemberData(nameof(InsertRangeTestData))]
+        public void InsertRangeManual(List<(long, long)> data)
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>>? actualList;
+
+            //Act
+            Tree.InsertRange(data);
+            actualList = Tree?.LevelOrder();
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
+            {
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
+        }
+
+        [Theory]
+        [InlineData(-1000000, 0)]
+        [InlineData(-100000, 0)]
+        [InlineData(-10000, 0)]
+        [InlineData(-1000, 0)]
+        [InlineData(-100, 0)]
+        [InlineData(-10, 0)]
+        [InlineData(-1, 0)]
+        [InlineData(0, 0)]
+        [InlineData(0, 1)]
+        [InlineData(0,10)]
+        [InlineData(0,100)]
+        [InlineData(0,1000)]
+        [InlineData(0,10000)]
+        [InlineData(0,100000)]
+        [InlineData(0,1000000)]
+        [InlineData(0,10000000)]
+        [InlineData(-3,10000000)]
+        public void InsertRangeGenerated(int start, int end)
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>>? actualList;
+            List<(long, long)> data = new List<(long, long)>(end-start);
+            for (int index = start; index < end; index++)
+            {
+                data.Add(new (index,index));
+            }
+
+            //Act
+            Tree.InsertRange(data);
+            actualList = Tree?.LevelOrder();
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
+            {
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
+        }
+
         [Fact]
         public void BalanceEmptyTree()
         {
@@ -762,6 +845,23 @@ namespace TestStructures
                 {
                     new int[] {2,1,3},3
                 },
+            };
+
+        public static IEnumerable<object[]> InsertRangeTestData =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new List<(long,long)> {(1,1)},
+                },
+                new object[]
+                {
+                    new List<(long,long)> {(1,1), (2, 2), (3, 3), (4, 4)}
+                },
+                new object[]
+                {
+                    new List<(long,long)> {  (4, 4), (3, 3), (2, 2), (1,1)}
+                }
             };
 
         public void Dispose()

@@ -528,6 +528,31 @@ namespace Structures.Tree
             }
         }
 
+        /// <summary>
+        /// Creates a tree from an unsorted array of (key, data) tuples.
+        /// </summary>
+        /// <param name="inputRange">unsorted array of (key, data) tuples</param>
+        public void InsertRange(List<(TKey,TData?)> inputRange)
+        {
+            inputRange.Sort((x,y) => y.Item1.CompareTo(x.Item1));
+            Root = InsertMedian(0, inputRange.Count-1, inputRange);
+        }
+
+        private BinaryTreeNode<TKey, TData?> InsertMedian(int leftBound, int rightBound, List<(TKey, TData?)> inputRange)
+        {
+            if (leftBound <= rightBound)
+            {
+                //find median
+                int median = (int)Math.Floor((double)((leftBound + rightBound) / 2));
+                var medianItem = inputRange[median];
+                BinaryTreeNode<TKey, TData?> node = new BinaryTreeNode<TKey, TData?>(medianItem.Item1, medianItem.Item2);
+                node.SetLeftSon(InsertMedian(leftBound,median - 1, inputRange));
+                node.SetRightSon(InsertMedian(median + 1,rightBound, inputRange));
+                return node;
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Gets the size of the tree.
