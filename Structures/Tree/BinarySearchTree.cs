@@ -302,6 +302,31 @@ namespace Structures.Tree
             return node;
         }
 
+        private BinaryTreeNode<TKey, TData?> InOrderPredecessor(BinaryTreeNode<TKey, TData?> node)
+        {
+            if (node.HasLeftSon())
+            {
+                BinaryTreeNode<TKey, TData?> predecessor = node.GetLeftSon()!;
+                while (predecessor!.GetRightSon() != null)
+                {
+                    predecessor = predecessor.GetRightSon();
+                }
+
+                return predecessor;
+            }
+
+            BinaryTreeNode<TKey, TData?>? parent = node.Parent as BinaryTreeNode<TKey, TData?>;
+            while (parent != null && node.IsLeftSon())
+            {
+                node = parent;
+                parent = parent.Parent as BinaryTreeNode<TKey, TData?>;
+            }
+
+            return node;
+        }
+
+
+
         private void ReplaceNodes(BinaryTreeNode<TKey, TData?> node, BinaryTreeNode<TKey, TData?>? replacement)
         {
             if (node.Parent == null)
@@ -360,6 +385,28 @@ namespace Structures.Tree
                 else
                 {
                     actual = actual.GetRightSon();
+                }
+            }
+            return actual;
+        }
+
+        public BinaryTreeNode<TKey, TData?>? FindNodeOrParent(TKey key)
+        {
+            var actual = Root as BinaryTreeNode<TKey, TData?>;
+
+            while (actual != null && !actual.Key.Equals(key))
+            {
+                if (key.CompareTo(actual.Key) < 0 && actual.HasLeftSon())
+                {
+                    actual = actual.GetLeftSon();
+                }
+                else if(key.CompareTo(actual.Key) > 0 && actual.HasRightSon())
+                {
+                    actual = actual.GetRightSon();
+                }
+                else
+                {
+                    return actual;
                 }
             }
             return actual;
@@ -552,6 +599,31 @@ namespace Structures.Tree
             }
 
             return null;
+        }
+
+        public List<TData?> FindRange(TKey start, TKey end)
+        {
+            List<TData?> result = new();
+            if (Root != null)
+            {
+                BinaryTreeNode<TKey, TData?>? current = InOrderPredecessor(FindNodeOrParent(start));
+                if (current != null)
+                {
+                    while (current.Key.CompareTo(end) <= 0)
+                    {
+                        if (current.Key.CompareTo(start) >= 0)
+                        {
+                            result.Add(current.Data);
+                        }
+                        current = InOrderSuccessor(current);
+                        if (result.Contains(current.Data))
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
         }
 
         /// <summary>

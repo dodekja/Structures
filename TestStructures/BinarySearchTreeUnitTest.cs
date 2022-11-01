@@ -1,4 +1,5 @@
 using Structures.Tree;
+using System.Collections.Generic;
 using TestStructures.Generator;
 
 namespace TestStructures
@@ -135,7 +136,85 @@ namespace TestStructures
 
             //Assert
             Assert.True(found);
+        }
 
+        [Fact]
+        public void FindRangeEmtpyTree()
+        {
+            //Arrange && Act
+            var result = Tree.FindRange(0, 10);
+
+            //Assert
+            Assert.True(result is { Count: 0 });
+        }
+
+
+        [Theory]
+        [MemberData(nameof(FindRangeTestData))]
+        public void FindRangeManualInput(List<(long, long)> data, int start, int end)
+        {
+            //Arrange
+            Tree.InsertRange(data);
+
+            //Act
+            var result = Tree.FindRange(start, end);
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < result.Count; controlIndex++)
+            {
+                if (result[controlIndex] >= start && result[controlIndex] <= end)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+
+            Assert.True(equals, $"The list contains an item that is outside the range <{start};{end}> at index: {controlIndex}");
+        }
+        
+        [Theory]
+        [InlineData(0,10,2,4)]
+        [InlineData(0,1000,20,400)]
+        [InlineData(0,1000,20,900)]
+        [InlineData(-1000,1000,-200,900)]
+        [InlineData(0,1000,-100,2000)]
+        [InlineData(0,100,-100,50)]
+        [InlineData(0,100,50,200)]
+        public void FindRangeGeneratedInput(int itemsStart, int itemsEnd, int rangeStart, int rangeEnd)
+        {
+            //Arrange
+            for (int itemIndex = itemsStart; itemIndex < itemsEnd; itemIndex++)
+            {
+                Tree.Add(itemIndex,itemIndex);
+            }
+
+            //Act
+            var result = Tree.FindRange(rangeStart, rangeEnd);
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            for (controlIndex = 0; controlIndex < result.Count; controlIndex++)
+            {
+                if (result[controlIndex] >= rangeStart && result[controlIndex] <= rangeEnd)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+
+            Assert.True(equals, $"The list contains an item that is outside the range <{rangeStart};{rangeEnd}> at index: {controlIndex}");
         }
 
         [Fact]
@@ -859,6 +938,29 @@ namespace TestStructures
                 new object[]
                 {
                     new List<(long,long)> {  (4, 4), (3, 3), (2, 2), (1,1)}
+                }
+            };
+
+        public static IEnumerable<object[]> FindRangeTestData =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new List<(long,long)> {(1,1)},
+                    0,
+                    1
+                },
+                new object[]
+                {
+                    new List<(long,long)> {(1,1), (2, 2), (3, 3), (4, 4)},
+                    0,
+                    2
+                },
+                new object[]
+                {
+                    new List<(long,long)> {  (4, 4), (3, 3), (2, 2), (1,1)},
+                    0,
+                    2
                 }
             };
 
