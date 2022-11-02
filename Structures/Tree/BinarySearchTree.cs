@@ -615,8 +615,10 @@ namespace Structures.Tree
                         {
                             result.Add(current.Data);
                         }
+
+                        var old = current; 
                         current = InOrderSuccessor(current);
-                        if (result.Contains(current.Data))
+                        if (result.Contains(current.Data) || old == current)
                         {
                             break;
                         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Structures.Tree;
 
 namespace SemestralThesisOne.Core.Model
 {
@@ -15,8 +16,9 @@ namespace SemestralThesisOne.Core.Model
 
         public Enums.InsuranceCompanyCodes InsuranceCompanyCode { get; set; }
 
-        //TODO: Change this to the augmented BST
-        public List<Hospitalization> Hospitalizations { get; set; }
+        public Hospitalization? CurrentHospitalization { get; set; }
+
+        public BinarySearchTree<string, Hospitalization> HospitalizationsEnded { get; set; }
 
         public Patient(string firstName, string lastName, string identificationNumber, DateTime dateOfBirth, Enums.InsuranceCompanyCodes insuranceCompanyCode)
         {
@@ -25,13 +27,43 @@ namespace SemestralThesisOne.Core.Model
             IdentificationNumber = identificationNumber;
             DateOfBirth = dateOfBirth;
             InsuranceCompanyCode = insuranceCompanyCode;
-            Hospitalizations = new List<Hospitalization>();
+            CurrentHospitalization = null;
+            HospitalizationsEnded = new BinarySearchTree<string, Hospitalization>();
         }
 
         public override string ToString()
         {
-            return $"Name: {FirstName} {LastName}, ID: {IdentificationNumber}," +
-                   $" Date of Birth: {DateOfBirth.ToShortDateString()} Insurance: {InsuranceCompanyCode}";
+            string str = $"Name: {FirstName} {LastName}, ID: {IdentificationNumber}," +
+                         $" Date of Birth: {DateOfBirth.ToShortDateString()} Insurance: {InsuranceCompanyCode}";
+            if (CurrentHospitalization != null)
+            {
+                str += " Current Hos.: ";
+                    str += CurrentHospitalization.ToString();
+            }
+
+            if (HospitalizationsEnded.Count > 0)
+            {
+                str += " Past Hos.: ";
+                foreach (var tuple in HospitalizationsEnded.InOrder())
+                {
+                    str += $"{tuple.Item2.ToString()}";
+                }
+            }
+            return str;
+        }
+
+        public void AddCurrentHospitalization(DateTime start, string diagnosis)
+        {
+            CurrentHospitalization = new Hospitalization(start, null, diagnosis);
+        }
+
+        public void AddEndedHospitalization(DateTime? end)
+        {
+            CurrentHospitalization.End = end;
+            HospitalizationsEnded.Add(CurrentHospitalization.Start.ToShortDateString() + CurrentHospitalization.Start.ToShortTimeString() +
+                                      CurrentHospitalization.End.Value.ToShortDateString() + CurrentHospitalization.End.Value.ToShortTimeString(),
+                                        CurrentHospitalization);
+            CurrentHospitalization = null;
         }
     }
 }

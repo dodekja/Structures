@@ -48,7 +48,9 @@ namespace SemestralThesisOne
 
         private void StartHospitalization(object sender, RoutedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            AddHospitalizationWindow addHospitalization =
+                new AddHospitalizationWindow(app.HospitalManager, app.PatientManager);
+            addHospitalization.ShowDialog();
         }
 
         private void EndHospitalization(object sender, RoutedEventArgs e)
@@ -79,6 +81,18 @@ namespace SemestralThesisOne
         {
             ShowHospitalsWindow showPatients = new ShowHospitalsWindow(app.HospitalManager);
             showPatients.ShowDialog();
+        }
+
+        private void FindPatient(object sender, RoutedEventArgs e)
+        {
+            FindPatientWindow findPatient = new FindPatientWindow(app.HospitalManager);
+            findPatient.ShowDialog();
+        }
+
+        private void FindPatientsByName(object sender, RoutedEventArgs e)
+        {
+            FindPatientsRangeWindow findPatients = new FindPatientsRangeWindow(app.HospitalManager);
+            findPatients.ShowDialog();
         }
     }
 }

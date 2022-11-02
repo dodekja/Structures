@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Documents;
+using System.Xml.Linq;
 using SemestralThesisOne.Core.Database;
 using SemestralThesisOne.Core.Model;
 
@@ -47,6 +48,32 @@ namespace SemestralThesisOne.Core.ViewModel
             }
 
             return patients;
+        }
+
+        public Patient? GetPatientFromHospitalById(string hospitalName, string patientId)
+        {
+            Hospital? hospital = _hospitals.Get(hospitalName);
+            if (hospital != null)
+            {
+                return hospital.GetPatient(patientId);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid hospital name");
+            }
+        }
+
+        public List<Patient> GetPatientsFromHospitalByName(string hospitalName, string patientName)
+        {
+            Hospital? hospital = _hospitals.Get(hospitalName);
+            if (hospital != null)
+            {
+                return hospital.GetPatientsRange(patientName);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid hospital name");
+            }
         }
 
         public List<Hospital> GetAllHospitals()
