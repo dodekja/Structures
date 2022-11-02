@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Documents;
 using SemestralThesisOne.Core.Generators;
 using SemestralThesisOne.Core.Model;
-using SemestralThesisOne.UserInterface;
 using SemestralThesisOne.UserInterface.Hospital;
 using SemestralThesisOne.UserInterface.Patient;
 
@@ -49,13 +46,14 @@ namespace SemestralThesisOne
         private void StartHospitalization(object sender, RoutedEventArgs e)
         {
             AddHospitalizationWindow addHospitalization =
-                new AddHospitalizationWindow(app.HospitalManager, app.PatientManager);
+                new AddHospitalizationWindow(app.HospitalManager);
             addHospitalization.ShowDialog();
         }
 
         private void EndHospitalization(object sender, RoutedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            EndHospitalizationWindow endHospitalization = new EndHospitalizationWindow(app.HospitalManager);
+            endHospitalization.ShowDialog();
         }
 
         private void GenerateData(object sender, RoutedEventArgs e)

@@ -1,17 +1,6 @@
 ﻿using SemestralThesisOne.Core.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace SemestralThesisOne.UserInterface.Patient
 {
@@ -21,13 +10,11 @@ namespace SemestralThesisOne.UserInterface.Patient
     public partial class AddHospitalizationWindow : Window
     {
         private HospitalManager _hospitalManager;
-        private PatientManager _patientManager;
         private Core.Model.Patient? _patient;
 
-        public AddHospitalizationWindow(HospitalManager hospitalManager, PatientManager patientManager)
+        public AddHospitalizationWindow(HospitalManager hospitalManager)
         {
             _hospitalManager = hospitalManager;
-            _patientManager = patientManager;
             _patient = null;
             InitializeComponent();
         }
@@ -40,7 +27,7 @@ namespace SemestralThesisOne.UserInterface.Patient
                 _patient = _hospitalManager.GetPatientFromHospitalById(HospitalNameTextBox.Text, PatientIdTextBox.Text);
                 if (_patient != null)
                 {
-                    PatientsTextBlock.Text += _patient.ToString() + "\n";
+                    PatientsTextBlock.Text = _patient.ToString() + "\n";
                 }
                 else
                 {

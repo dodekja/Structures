@@ -35,7 +35,6 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0" Grid.Row="0">Hospital Name</Label>
@@ -44,22 +43,19 @@
         <Label Grid.Column="0" Grid.Row="1">Patient ID</Label>
         <TextBox Grid.Row="1" Grid.Column="1" Name="PatientIdTextBox"></TextBox>
 
-        <Label Grid.Column="0" Grid.Row="2">Hospitalization Start</Label>
-        <DatePicker Grid.Row="2" Grid.Column="1" Name="HospitalizationStartDatePicker"></DatePicker>
-
-        <Label Grid.Column="0" Grid.Row="3">Hospitalization End</Label>
-        <DatePicker Grid.Row="3" Grid.Column="1" Name="HospitalizationEndDatePicker"></DatePicker>
+        <Label Grid.Column="0" Grid.Row="2">Hospitalization End</Label>
+        <DatePicker Grid.Row="2" Grid.Column="1" Name="HospitalizationEndDatePicker"></DatePicker>
 
         <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Name="FindButton" Click="FindButton_OnClick" IsDefault="True">Find</Button>
             <Button Name="CancelButton" IsCancel="True">Cancel</Button>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Name="AddEndButton" Click="AddEndButton_OnClickButton_OnClick" IsDefault="True">Add End</Button>
+        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Name="AddEndButton" Click="AddEndButton_OnClickButton_OnClick" IsDefault="True">End Hospitalization</Button>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Height="285" CanContentScroll="True" Margin="5,0,0,0">
+        <ScrollViewer Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Height="285" CanContentScroll="True" Margin="5,0,0,0">
             <TextBlock TextWrapping="Wrap" Name="PatientsTextBlock"></TextBlock>
         </ScrollViewer>
     </Grid>

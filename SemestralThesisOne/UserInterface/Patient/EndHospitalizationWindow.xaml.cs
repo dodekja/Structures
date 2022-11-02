@@ -1,17 +1,6 @@
 ﻿using SemestralThesisOne.Core.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace SemestralThesisOne.UserInterface.Patient
 {
@@ -37,7 +26,7 @@ namespace SemestralThesisOne.UserInterface.Patient
                 _patient = _hospitalManager.GetPatientFromHospitalById(HospitalNameTextBox.Text, PatientIdTextBox.Text);
                 if (_patient != null)
                 {
-                    PatientsTextBlock.Text += _patient.ToString() + "\n";
+                    PatientsTextBlock.Text = _patient.ToString() + "\n";
                 }
                 else
                 {
@@ -54,7 +43,24 @@ namespace SemestralThesisOne.UserInterface.Patient
 
         private void AddEndButton_OnClickButton_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            if (_patient != null)
+            {
+                if (_patient.IsHospitalized())
+                {
+                    _patient.EndHospitalization(HospitalizationEndDatePicker.SelectedDate);
+                    PatientsTextBlock.Text = _patient.ToString() + "\n";
+                }
+                else
+                {
+                    MessageBox.Show($"Patient with ID {_patient.IdentificationNumber} is not currently hospitalized.", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Patient not loaded.", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
     }
 }

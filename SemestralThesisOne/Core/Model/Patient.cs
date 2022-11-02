@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Structures.Tree;
 
 namespace SemestralThesisOne.Core.Model
@@ -57,13 +56,18 @@ namespace SemestralThesisOne.Core.Model
             CurrentHospitalization = new Hospitalization(start, null, diagnosis);
         }
 
-        public void AddEndedHospitalization(DateTime? end)
+        public void EndHospitalization(DateTime? end)
         {
             CurrentHospitalization.End = end;
             HospitalizationsEnded.Add(CurrentHospitalization.Start.ToShortDateString() + CurrentHospitalization.Start.ToShortTimeString() +
                                       CurrentHospitalization.End.Value.ToShortDateString() + CurrentHospitalization.End.Value.ToShortTimeString(),
                                         CurrentHospitalization);
             CurrentHospitalization = null;
+        }
+
+        public bool IsHospitalized()
+        {
+            return CurrentHospitalization != null;
         }
     }
 }
