@@ -46,23 +46,33 @@ namespace SemestralThesisOne.UserInterface.Patient
         {
             if (_patient != null)
             {
-                if (HospitalizationStartDatePicker.SelectedDate != null)
+                if (!_patient.IsHospitalized())
                 {
-                    if (!string.IsNullOrWhiteSpace(DiagnosisTextBox.Text))
+
+                    if (HospitalizationStartDatePicker.SelectedDate != null)
                     {
-                        _patient.AddCurrentHospitalization(HospitalizationStartDatePicker.SelectedDate.Value, DiagnosisTextBox.Text);
-                        _hospitalManager.AddCurrentlyHospitalizedPatient(HospitalNameTextBox.Text,_patient);
-                        PatientsTextBlock.Text = _patient.ToString() + "\n";
+                        if (!string.IsNullOrWhiteSpace(DiagnosisTextBox.Text))
+                        {
+                            //TODO: Add StartTime (Timepicker and modify the method to save data)
+                            _patient.AddCurrentHospitalization(HospitalizationStartDatePicker.SelectedDate.Value, DiagnosisTextBox.Text);
+                            _hospitalManager.AddCurrentlyHospitalizedPatient(HospitalNameTextBox.Text, _patient);
+                            PatientsTextBlock.Text = _patient.ToString() + "\n";
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Please enter a diagnosis", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
                     }
                     else
                     {
-                        MessageBox.Show($"Please enter a diagnosis", "Error",
+                        MessageBox.Show($"Please select hospitalization start date", "Error",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
                 else
                 {
-                    MessageBox.Show($"Please select hospitalization start date", "Error",
+                    MessageBox.Show($"Patient is already hospitalized", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }

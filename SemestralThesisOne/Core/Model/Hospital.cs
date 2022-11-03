@@ -39,6 +39,11 @@ namespace SemestralThesisOne.Core.Model
             return _currentlyHospitalizedPatients.InOrder();
         }
 
+        public List<Patient> GetAllCurrentlyHospitalizedPatientsRange(DateTime rangeStart, DateTime rangeEnd)
+        {
+            return _currentlyHospitalizedPatients.FindRange(rangeStart,rangeEnd);
+        }
+
         public Patient? GetPatient(string id)
         {
             return _patientsById.Find(id);

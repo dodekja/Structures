@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Documents;
-using System.Xml.Linq;
 using SemestralThesisOne.Core.Database;
 using SemestralThesisOne.Core.Model;
 
@@ -63,6 +61,18 @@ namespace SemestralThesisOne.Core.ViewModel
             foreach (var item in inOrderList)
             {
                 patients.Add(item.Item2);
+            }
+
+            return patients;
+        }
+
+        public List<Patient> GetCurrentlyHospitalizedPatientsRangeByDate(string hospitalName, DateTime rangeStart, DateTime rangeEnd)
+        {
+            Hospital? hospital = _hospitals.Get(hospitalName);
+            List<Patient> patients = new List<Patient>();
+            if (hospital != null)
+            {
+                patients = hospital.GetAllCurrentlyHospitalizedPatientsRange(rangeStart,rangeEnd);
             }
 
             return patients;
