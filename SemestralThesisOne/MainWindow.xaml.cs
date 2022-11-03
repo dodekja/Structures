@@ -92,5 +92,11 @@ namespace SemestralThesisOne
             FindPatientsRangeWindow findPatients = new FindPatientsRangeWindow(app.HospitalManager);
             findPatients.ShowDialog();
         }
+
+        private void ShowCurrentlyHospitalizedPatients(object sender, RoutedEventArgs e)
+        {
+            ShowCurrentlyHospitalizedPatientsWindow currentlyHospitalizedPatients = new ShowCurrentlyHospitalizedPatientsWindow(app.HospitalManager);
+            currentlyHospitalizedPatients.ShowDialog();
+        }
     }
 }

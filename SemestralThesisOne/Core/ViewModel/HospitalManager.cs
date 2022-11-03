@@ -50,6 +50,24 @@ namespace SemestralThesisOne.Core.ViewModel
             return patients;
         }
 
+        public List<Patient> GetCurrentlyHospitalizedPatients(string hospitalName)
+        {
+            Hospital? hospital = _hospitals.Get(hospitalName);
+            List<Tuple<DateTime, Patient>> inOrderList = new List<Tuple<DateTime, Patient>>();
+            if (hospital != null)
+            {
+                inOrderList = hospital.GetAllCurrentlyHospitalizedPatients();
+            }
+
+            List<Patient> patients = new List<Patient>();
+            foreach (var item in inOrderList)
+            {
+                patients.Add(item.Item2);
+            }
+
+            return patients;
+        }
+
         public Patient? GetPatientFromHospitalById(string hospitalName, string patientId)
         {
             Hospital? hospital = _hospitals.Get(hospitalName);
@@ -74,6 +92,18 @@ namespace SemestralThesisOne.Core.ViewModel
             {
                 throw new ArgumentException("Invalid hospital name");
             }
+        }
+
+        public void AddCurrentlyHospitalizedPatient(string hospitalName, Patient patient)
+        {
+            Hospital? hospital = _hospitals.Get(hospitalName);
+            hospital.AddCurrentlyHospitalizedPatient(patient);
+        }
+
+        public void RemoveCurrentlyHospitalizedPatient(string hospitalName, Patient patient)
+        {
+            Hospital? hospital = _hospitals.Get(hospitalName);
+            hospital.RemoveCurrentlyHospitalizedPatient(patient);
         }
 
         public List<Hospital> GetAllHospitals()

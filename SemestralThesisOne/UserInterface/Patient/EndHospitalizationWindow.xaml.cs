@@ -47,6 +47,7 @@ namespace SemestralThesisOne.UserInterface.Patient
             {
                 if (_patient.IsHospitalized())
                 {
+                    _hospitalManager.RemoveCurrentlyHospitalizedPatient(HospitalNameTextBox.Text, _patient);
                     _patient.EndHospitalization(HospitalizationEndDatePicker.SelectedDate);
                     PatientsTextBlock.Text = _patient.ToString() + "\n";
                 }

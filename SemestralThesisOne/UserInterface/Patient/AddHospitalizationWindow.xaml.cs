@@ -51,6 +51,7 @@ namespace SemestralThesisOne.UserInterface.Patient
                     if (!string.IsNullOrWhiteSpace(DiagnosisTextBox.Text))
                     {
                         _patient.AddCurrentHospitalization(HospitalizationStartDatePicker.SelectedDate.Value, DiagnosisTextBox.Text);
+                        _hospitalManager.AddCurrentlyHospitalizedPatient(HospitalNameTextBox.Text,_patient);
                         PatientsTextBlock.Text = _patient.ToString() + "\n";
                     }
                     else

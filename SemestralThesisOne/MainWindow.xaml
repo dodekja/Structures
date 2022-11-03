@@ -33,6 +33,7 @@
 
         <Button Grid.Row="2" Grid.Column="0" Content="Generate Data" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="80" Margin="5,5,5,5" Click="GenerateData"></Button>
         <Button Grid.Row="2" Grid.Column="1" Content="Show Hospitals" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="80" Margin="5,5,5,5" Click="ShowHospitals"></Button>
+        <Button Grid.Row="2" Grid.Column="2" Content="Show Currently Hospitalized Patients" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="200" Margin="5,5,5,5" Click="ShowCurrentlyHospitalizedPatients"></Button>
 
         <Button Grid.Row="4" Content="Quit" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="80" Margin="5,5,5,5" Click="Button_Click"/>
 
