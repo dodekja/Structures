@@ -138,5 +138,15 @@ namespace SemestralThesisOne.Core.ViewModel
         {
             return _hospitals.GetAllHospitals();
         }
+
+        public void Balance()
+        {
+            _hospitals.Balance();
+        }
+
+        public void RemoveHospital(string toDelete, string newDocumentationOwner)
+        {
+            _hospitals.RemoveHospital(toDelete, newDocumentationOwner);
+        }
     }
 }

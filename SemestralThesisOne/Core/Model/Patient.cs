@@ -69,5 +69,21 @@ namespace SemestralThesisOne.Core.Model
         {
             return CurrentHospitalization != null;
         }
+
+        public void Balance()
+        {
+            HospitalizationsEnded.Balance();
+        }
+
+        public void SetCurrentHospitalization(Hospitalization hospitalization)
+        {
+            CurrentHospitalization = hospitalization;
+        }
+
+        public void SetEndedHospitalization(Hospitalization hospitalization)
+        {
+            HospitalizationsEnded.Add(hospitalization.Start.ToShortDateString() + hospitalization.Start.ToShortTimeString() +
+                                      hospitalization.End.Value.ToShortDateString() + hospitalization.End.Value.ToShortTimeString(),hospitalization);
+        }
     }
 }

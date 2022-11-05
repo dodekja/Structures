@@ -1,4 +1,5 @@
-﻿using SemestralThesisOne.Core.Model;
+﻿using System;
+using SemestralThesisOne.Core.Model;
 using Structures.Tree;
 
 namespace SemestralThesisOne.Core.Database
@@ -15,6 +16,15 @@ namespace SemestralThesisOne.Core.Database
         public void Add(Patient patient)
         {
             PatientsByID.Add(patient.IdentificationNumber,patient);
+        }
+
+        public void Balance()
+        {
+            PatientsByID.Balance();
+            foreach (Tuple<string, Patient?> tuple in PatientsByID.InOrder())
+            {
+                tuple.Item2.Balance();
+            }
         }
     }
 }

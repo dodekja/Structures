@@ -41,6 +41,22 @@ namespace SemestralThesisOne.Core.Model
             return _currentlyHospitalizedPatientsByDate.InOrder();
         }
 
+        public void AddCurrentlyHospitalizedPatients(List<Tuple<DateTime, Patient>> data)
+        {
+            foreach (var tuple in data)
+            {
+                AddCurrentlyHospitalizedPatient(tuple.Item2);
+            }
+        }
+
+        public void AddPatients(List<Tuple<string, Patient>> data)
+        {
+            foreach (var tuple in data)
+            {
+                AddPatient(tuple.Item2);
+            }
+        }
+
         public List<Tuple<string, Patient>> GetAllCurrentlyHospitalizedPatientsById()
         {
             return _currentlyHospitalizedPatientsByID.InOrder();
@@ -86,6 +102,14 @@ namespace SemestralThesisOne.Core.Model
         {
             //TODO: Change FindPatients By Name
             return _patientsByName.FindRange(patientName + "00000000000", patientName + "ZZZZZZZZZZZ");
+        }
+
+        public void Balance()
+        {
+            _patientsById.Balance();
+            _patientsByName.Balance();
+            _currentlyHospitalizedPatientsByDate.Balance();
+            _currentlyHospitalizedPatientsByID.Balance();
         }
     }
 }

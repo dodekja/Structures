@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Documents;
+using System.Windows;
 using SemestralThesisOne.Core.Model;
 using Structures.Tree;
 
@@ -17,7 +17,7 @@ namespace SemestralThesisOne.Core.Database
 
         public void Add(Hospital hospital)
         {
-            _tree.Add(hospital.Name,hospital);
+            _tree.Add(hospital.Name, hospital);
         }
 
         public Hospital Get(string name)
@@ -41,6 +41,43 @@ namespace SemestralThesisOne.Core.Database
             }
 
             return hospitals;
+        }
+
+        public void Balance()
+        {
+            _tree.Balance();
+            foreach (var hospital in _tree.InOrder())
+            {
+                hospital.Item2.Balance();
+            }
+        }
+
+        public void RemoveHospital(string toDelete, string newDocumentationOwnerName)
+        {
+            Hospital? deleted = null;
+            Hospital? newOwner = null;
+            try
+            {
+                deleted = _tree.Remove(toDelete);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Hospital {toDelete} does not exist", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            try
+            {
+                newOwner = Get(newDocumentationOwnerName);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Hospital {newDocumentationOwnerName} does not exist", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+            newOwner.AddPatients(deleted.GetAllPatients());
+            newOwner.AddCurrentlyHospitalizedPatients(deleted.GetAllCurrentlyHospitalizedPatients());
+
         }
     }
 }

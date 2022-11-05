@@ -2,6 +2,7 @@
 using System.Windows;
 using SemestralThesisOne.Core.Generators;
 using SemestralThesisOne.Core.Model;
+using SemestralThesisOne.UserInterface.App;
 using SemestralThesisOne.UserInterface.Hospital;
 using SemestralThesisOne.UserInterface.Patient;
 
@@ -58,21 +59,8 @@ namespace SemestralThesisOne
 
         private void GenerateData(object sender, RoutedEventArgs e)
         {
-            List<string> hospitals = new List<string>();
-            Hospital hospital;
-            Patient patient;
-            for (int hospitalIndex = 0; hospitalIndex < 50; hospitalIndex++)
-            {
-                hospital = DataGenerator.GenerateHospital();
-                app.HospitalManager.AddNewRecord(hospital);
-                hospitals.Add(hospital.Name);
-                for (int patientIndex = 0; patientIndex < 50; patientIndex++)
-                {
-                    patient = DataGenerator.GeneratePatient();
-                    app.HospitalManager.AddPatientToHospital(hospitals[hospitalIndex], patient);
-                    app.PatientManager.AddNewRecord(patient);
-                }
-            }
+            GenerateDataWindow generateData = new GenerateDataWindow(app.HospitalManager,app.PatientManager);
+            generateData.ShowDialog();
         }
 
         private void ShowHospitals(object sender, RoutedEventArgs e)
@@ -97,6 +85,26 @@ namespace SemestralThesisOne
         {
             ShowCurrentlyHospitalizedPatientsWindow currentlyHospitalizedPatients = new ShowCurrentlyHospitalizedPatientsWindow(app.HospitalManager);
             currentlyHospitalizedPatients.ShowDialog();
+        }
+
+        private void ShowInsuranceReport(object sender, RoutedEventArgs e)
+        {
+            InsuranceReportWindow insuranceReport = new InsuranceReportWindow();
+            insuranceReport.ShowDialog();
+        }
+
+        private void BalanceStructures(object sender, RoutedEventArgs e)
+        {
+            app.HospitalManager.Balance();
+            app.PatientManager.Balance();
+            MessageBox.Show($"All structures successfully balanced.", "Success",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void RemoveHospital(object sender, RoutedEventArgs e)
+        {
+            RemoveHospitalWindow removeHospital = new RemoveHospitalWindow(app.HospitalManager);
+            removeHospital.ShowDialog();
         }
     }
 }

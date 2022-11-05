@@ -585,7 +585,7 @@ namespace Structures.Tree
             Root = InsertMedian(0, inputRange.Count-1, inputRange);
         }
 
-        private BinaryTreeNode<TKey, TData?> InsertMedian(int leftBound, int rightBound, List<(TKey, TData?)> inputRange)
+        private BinaryTreeNode<TKey, TData?>? InsertMedian(int leftBound, int rightBound, List<(TKey, TData?)> inputRange)
         {
             if (leftBound <= rightBound)
             {
