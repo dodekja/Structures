@@ -53,6 +53,7 @@ namespace SemestralThesisOne.Core.Model
         {
             if (patient.IsHospitalized())
             {
+                //TODO: Add patient ID to the key
                 _currentlyHospitalizedPatients.Add(patient.CurrentHospitalization.Start, patient);
             }
         }
