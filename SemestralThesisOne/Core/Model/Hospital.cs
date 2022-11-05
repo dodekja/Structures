@@ -10,7 +10,8 @@ namespace SemestralThesisOne.Core.Model
 
         private BinarySearchTree<string, Patient> _patientsById;
         private BinarySearchTree<string, Patient> _patientsByName;
-        private BinarySearchTree<DateTime, Patient> _currentlyHospitalizedPatients;
+        private BinarySearchTree<DateTime, Patient> _currentlyHospitalizedPatientsByDate;
+        private BinarySearchTree<string, Patient> _currentlyHospitalizedPatientsByID;
 
         public BinarySearchTree<string, Hospitalization> Hospitalizations { get; set; }
 
@@ -20,7 +21,8 @@ namespace SemestralThesisOne.Core.Model
             Hospitalizations = new BinarySearchTree<string, Hospitalization>();
             _patientsById = new BinarySearchTree<string, Patient>();
             _patientsByName = new BinarySearchTree<string, Patient>();
-            _currentlyHospitalizedPatients = new BinarySearchTree<DateTime, Patient>();
+            _currentlyHospitalizedPatientsByDate = new BinarySearchTree<DateTime, Patient>();
+            _currentlyHospitalizedPatientsByID = new BinarySearchTree<string, Patient>();
         }
 
         public void AddPatient(Patient patient)
@@ -36,12 +38,17 @@ namespace SemestralThesisOne.Core.Model
 
         public List<Tuple<DateTime, Patient>> GetAllCurrentlyHospitalizedPatients()
         {
-            return _currentlyHospitalizedPatients.InOrder();
+            return _currentlyHospitalizedPatientsByDate.InOrder();
+        }
+
+        public List<Tuple<string, Patient>> GetAllCurrentlyHospitalizedPatientsById()
+        {
+            return _currentlyHospitalizedPatientsByID.InOrder();
         }
 
         public List<Patient> GetAllCurrentlyHospitalizedPatientsRange(DateTime rangeStart, DateTime rangeEnd)
         {
-            return _currentlyHospitalizedPatients.FindRange(rangeStart,rangeEnd);
+            return _currentlyHospitalizedPatientsByDate.FindRange(rangeStart,rangeEnd);
         }
 
         public Patient? GetPatient(string id)
@@ -54,13 +61,15 @@ namespace SemestralThesisOne.Core.Model
             if (patient.IsHospitalized())
             {
                 //TODO: Add patient ID to the key
-                _currentlyHospitalizedPatients.Add(patient.CurrentHospitalization.Start, patient);
+                _currentlyHospitalizedPatientsByDate.Add(patient.CurrentHospitalization.Start, patient);
+                _currentlyHospitalizedPatientsByID.Add(patient.IdentificationNumber, patient);
             }
         }
 
         public void RemoveCurrentlyHospitalizedPatient(Patient patient)
         {
-            _ = _currentlyHospitalizedPatients.Remove(patient.CurrentHospitalization.Start);
+            _ = _currentlyHospitalizedPatientsByDate.Remove(patient.CurrentHospitalization.Start);
+            _ = _currentlyHospitalizedPatientsByID.Remove(patient.IdentificationNumber);
         }
 
         public override string ToString()

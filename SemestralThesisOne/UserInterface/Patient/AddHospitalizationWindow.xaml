@@ -44,7 +44,7 @@
         <Label Grid.Column="0" Grid.Row="1">Patient ID</Label>
         <TextBox Grid.Row="1" Grid.Column="1" Name="PatientIdTextBox"></TextBox>
 
-        <Label Grid.Column="0" Grid.Row="2">Hospitalization Start</Label>
+        <Label Grid.Column="0" Grid.Row="2">Hospitalization Start Date</Label>
         <DatePicker Grid.Row="2" Grid.Column="1" Name="HospitalizationStartDatePicker"></DatePicker>
 
         <Label Grid.Column="0" Grid.Row="3">Diagnosis</Label>

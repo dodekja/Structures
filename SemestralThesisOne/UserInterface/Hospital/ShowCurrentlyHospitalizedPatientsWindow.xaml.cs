@@ -92,5 +92,26 @@ namespace SemestralThesisOne.UserInterface.Hospital
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
+        private void FindInsuredByID_OnClick_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                PatientsTextBlock.Text = "";
+                var patientsList = _hospitalManager.GetCurrentlyHospitalizedPatientsById(NameTextBox.Text);
+                foreach (var patient in patientsList)
+                {
+                    if (Enums.GetStringFromInsuranceCompanyCode(patient.InsuranceCompanyCode) == InsuranceCompanyCodeComboBox.Text)
+                    {
+                        PatientsTextBlock.Text += patient.ToString() + "\n";
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
     }
 }

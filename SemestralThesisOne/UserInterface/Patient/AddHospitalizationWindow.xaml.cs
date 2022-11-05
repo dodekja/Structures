@@ -53,7 +53,6 @@ namespace SemestralThesisOne.UserInterface.Patient
                     {
                         if (!string.IsNullOrWhiteSpace(DiagnosisTextBox.Text))
                         {
-                            //TODO: Add StartTime (Timepicker and modify the method to save data)
                             _patient.AddCurrentHospitalization(HospitalizationStartDatePicker.SelectedDate.Value, DiagnosisTextBox.Text);
                             _hospitalManager.AddCurrentlyHospitalizedPatient(HospitalNameTextBox.Text, _patient);
                             PatientsTextBlock.Text = _patient.ToString() + "\n";

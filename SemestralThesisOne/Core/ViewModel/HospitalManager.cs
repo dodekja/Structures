@@ -66,6 +66,24 @@ namespace SemestralThesisOne.Core.ViewModel
             return patients;
         }
 
+        public List<Patient> GetCurrentlyHospitalizedPatientsById(string hospitalName)
+        {
+            Hospital? hospital = _hospitals.Get(hospitalName);
+            List<Tuple<string, Patient>> inOrderList = new List<Tuple<string, Patient>>();
+            if (hospital != null)
+            {
+                inOrderList = hospital.GetAllCurrentlyHospitalizedPatientsById();
+            }
+
+            List<Patient> patients = new List<Patient>();
+            foreach (var item in inOrderList)
+            {
+                patients.Add(item.Item2);
+            }
+
+            return patients;
+        }
+
         public List<Patient> GetCurrentlyHospitalizedPatientsRangeByDate(string hospitalName, DateTime rangeStart, DateTime rangeEnd)
         {
             Hospital? hospital = _hospitals.Get(hospitalName);
