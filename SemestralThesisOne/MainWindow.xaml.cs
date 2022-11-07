@@ -89,9 +89,10 @@ namespace SemestralThesisOne
 
         private void ShowInsuranceReport(object sender, RoutedEventArgs e)
         {
-            InsuranceReportWindow insuranceReport = new InsuranceReportWindow();
+            InsuranceReportWindow insuranceReport = new InsuranceReportWindow(app.HospitalManager);
             insuranceReport.ShowDialog();
         }
+
 
         private void BalanceStructures(object sender, RoutedEventArgs e)
         {
@@ -105,6 +106,13 @@ namespace SemestralThesisOne
         {
             RemoveHospitalWindow removeHospital = new RemoveHospitalWindow(app.HospitalManager);
             removeHospital.ShowDialog();
+        }
+
+        private void ShowHospitalizedPatientsBetweenDates(object sender, RoutedEventArgs e)
+        {
+            ShowPatientsBetweenDatesWindow showPatientsBetweenDates =
+                new ShowPatientsBetweenDatesWindow(app.HospitalManager);
+            showPatientsBetweenDates.ShowDialog();
         }
     }
 }

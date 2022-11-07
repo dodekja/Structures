@@ -10,8 +10,11 @@ namespace SemestralThesisOne.Core.Model
 
         private BinarySearchTree<string, Patient> _patientsById;
         private BinarySearchTree<string, Patient> _patientsByName;
+        //TODO: change key to a compare class
         private BinarySearchTree<DateTime, Patient> _currentlyHospitalizedPatientsByDate;
-        private BinarySearchTree<string, Patient> _currentlyHospitalizedPatientsByID;
+        private BinarySearchTree<string, Patient> _currentlyHospitalizedPatientsById;
+        //TODO: change key to a compare class
+        private BinarySearchTree<string, Patient> _hospitalizedPatientsById;
 
         public BinarySearchTree<string, Hospitalization> Hospitalizations { get; set; }
 
@@ -22,16 +25,17 @@ namespace SemestralThesisOne.Core.Model
             _patientsById = new BinarySearchTree<string, Patient>();
             _patientsByName = new BinarySearchTree<string, Patient>();
             _currentlyHospitalizedPatientsByDate = new BinarySearchTree<DateTime, Patient>();
-            _currentlyHospitalizedPatientsByID = new BinarySearchTree<string, Patient>();
+            _currentlyHospitalizedPatientsById = new BinarySearchTree<string, Patient>();
+            _hospitalizedPatientsById = new BinarySearchTree<string, Patient>();
         }
 
         public void AddPatient(Patient patient)
         {
-            _patientsById.Add(patient.IdentificationNumber,patient);
-            _patientsByName.Add(patient.FirstName + patient.LastName + patient.IdentificationNumber,patient);
+            _patientsById.Add(patient.IdentificationNumber, patient);
+            _patientsByName.Add(patient.FirstName + patient.LastName + patient.IdentificationNumber, patient);
         }
 
-        public List<Tuple<string,Patient>> GetAllPatients()
+        public List<Tuple<string, Patient>> GetAllPatients()
         {
             return _patientsById.InOrder();
         }
@@ -59,12 +63,12 @@ namespace SemestralThesisOne.Core.Model
 
         public List<Tuple<string, Patient>> GetAllCurrentlyHospitalizedPatientsById()
         {
-            return _currentlyHospitalizedPatientsByID.InOrder();
+            return _currentlyHospitalizedPatientsById.InOrder();
         }
 
         public List<Patient> GetAllCurrentlyHospitalizedPatientsRange(DateTime rangeStart, DateTime rangeEnd)
         {
-            return _currentlyHospitalizedPatientsByDate.FindRange(rangeStart,rangeEnd);
+            return _currentlyHospitalizedPatientsByDate.FindRange(rangeStart, rangeEnd);
         }
 
         public Patient? GetPatient(string id)
@@ -78,14 +82,19 @@ namespace SemestralThesisOne.Core.Model
             {
                 //TODO: Add patient ID to the key
                 _currentlyHospitalizedPatientsByDate.Add(patient.CurrentHospitalization.Start, patient);
-                _currentlyHospitalizedPatientsByID.Add(patient.IdentificationNumber, patient);
+                _currentlyHospitalizedPatientsById.Add(patient.IdentificationNumber, patient);
+            }
+
+            if (_hospitalizedPatientsById.FindNoThrow(patient.IdentificationNumber) == null)
+            {
+                _hospitalizedPatientsById.Add(patient.IdentificationNumber, patient);
             }
         }
 
         public void RemoveCurrentlyHospitalizedPatient(Patient patient)
         {
             _ = _currentlyHospitalizedPatientsByDate.Remove(patient.CurrentHospitalization.Start);
-            _ = _currentlyHospitalizedPatientsByID.Remove(patient.IdentificationNumber);
+            _ = _currentlyHospitalizedPatientsById.Remove(patient.IdentificationNumber);
         }
 
         public override string ToString()
@@ -109,7 +118,7 @@ namespace SemestralThesisOne.Core.Model
             _patientsById.Balance();
             _patientsByName.Balance();
             _currentlyHospitalizedPatientsByDate.Balance();
-            _currentlyHospitalizedPatientsByID.Balance();
+            _currentlyHospitalizedPatientsById.Balance();
         }
     }
 }

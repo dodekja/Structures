@@ -7,7 +7,7 @@ namespace SemestralThesisOne.UserInterface.Patient
     /// <summary>
     /// Interaction logic for AddHospitalizationWindow.xaml
     /// </summary>
-    public partial class AddHospitalizationWindow : Window
+    public partial class AddHospitalizationWindow
     {
         private HospitalManager _hospitalManager;
         private Core.Model.Patient? _patient;
@@ -22,12 +22,13 @@ namespace SemestralThesisOne.UserInterface.Patient
 
         private void FindButton_OnClick(object sender, RoutedEventArgs e)
         {
+            PatientsTextBlock.Text = "";
             try
             {
                 _patient = _hospitalManager.GetPatientFromHospitalById(HospitalNameTextBox.Text, PatientIdTextBox.Text);
                 if (_patient != null)
                 {
-                    PatientsTextBlock.Text = _patient.ToString() + "\n";
+                    PatientsTextBlock.Text = _patient + "\n";
                 }
                 else
                 {
@@ -44,40 +45,40 @@ namespace SemestralThesisOne.UserInterface.Patient
 
         private void AddStartButton_OnClick(object sender, RoutedEventArgs e)
         {
+            PatientsTextBlock.Text = "";
             if (_patient != null)
             {
                 if (!_patient.IsHospitalized())
                 {
-
                     if (HospitalizationStartDatePicker.SelectedDate != null)
                     {
                         if (!string.IsNullOrWhiteSpace(DiagnosisTextBox.Text))
                         {
                             _patient.AddCurrentHospitalization(HospitalizationStartDatePicker.SelectedDate.Value, DiagnosisTextBox.Text);
                             _hospitalManager.AddCurrentlyHospitalizedPatient(HospitalNameTextBox.Text, _patient);
-                            PatientsTextBlock.Text = _patient.ToString() + "\n";
+                            PatientsTextBlock.Text = _patient + "\n";
                         }
                         else
                         {
-                            MessageBox.Show($"Please enter a diagnosis", "Error",
+                            MessageBox.Show("Please enter a diagnosis", "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     }
                     else
                     {
-                        MessageBox.Show($"Please select hospitalization start date", "Error",
+                        MessageBox.Show("Please select hospitalization start date", "Error",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
                 else
                 {
-                    MessageBox.Show($"Patient is already hospitalized", "Error",
+                    MessageBox.Show("Patient is already hospitalized", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             else
             {
-                MessageBox.Show($"Patient not loaded", "Error",
+                MessageBox.Show("Patient not loaded", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }

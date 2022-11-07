@@ -24,6 +24,8 @@ namespace SemestralThesisOne.UserInterface.Hospital
                 try
                 {
                     hospitalManager.AddNewRecord(NameTextBox.Text);
+                    MessageBox.Show("Hospital added successfully.", "Success",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (ArgumentException argumentException)
                 {

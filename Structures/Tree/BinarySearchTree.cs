@@ -372,6 +372,20 @@ namespace Structures.Tree
             throw new ArgumentException($"Tree does not contain the key {key}");
         }
 
+        public TData? FindNoThrow(TKey key)
+        {
+            if (Root != null)
+            {
+                BinaryTreeNode<TKey, TData?>? node = FindNode(key);
+
+                if (node != null)
+                {
+                    return node.Data;
+                }
+            }
+            return default;
+        }
+
         public BinaryTreeNode<TKey, TData?>? FindNode(TKey key)
         {
             var actual = Root as BinaryTreeNode<TKey, TData?>;

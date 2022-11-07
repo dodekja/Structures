@@ -25,6 +25,7 @@ namespace SemestralThesisOne.UserInterface.Hospital
         public ShowHospitalsWindow(HospitalManager hospitalManager)
         {
             InitializeComponent();
+            HospitalsTextBlock.Text = "";
             _hospitalManager = hospitalManager;
             var hospitals = hospitalManager.GetAllHospitals();
             foreach (Core.Model.Hospital hospital in hospitals)

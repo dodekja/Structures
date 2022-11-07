@@ -19,6 +19,7 @@ namespace SemestralThesisOne.UserInterface.Hospital
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
+            PatientsTextBlock.Text = "";
             try
             {
                 var patientsList = hospitalManager.GetPatientsList(NameTextBox.Text);

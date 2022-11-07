@@ -9,7 +9,7 @@ namespace SemestralThesisOne.UserInterface.Patient
     /// <summary>
     /// Interaction logic for AddPatientWindow.xaml
     /// </summary>
-    public partial class AddPatientWindow : Window
+    public partial class AddPatientWindow
     {
         private PatientManager _patientManager;
 
@@ -50,20 +50,17 @@ namespace SemestralThesisOne.UserInterface.Patient
                     _patientManager.AddNewRecord(newPatient);
                     _hospitalManager.AddPatientToHospital(HospitalNameTextBox.Text, newPatient);
                 }
-                catch (ArgumentException argumentException)
+                catch (ArgumentException)
                 {
                     MessageBox.Show("Patient already exists", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
-                
             }
             else
             {
                 MessageBox.Show("Invalid Date of Birth or Insurance Company Code", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-
-            
         }
     }
 }

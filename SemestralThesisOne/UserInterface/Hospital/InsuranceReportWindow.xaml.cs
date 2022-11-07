@@ -20,14 +20,17 @@ namespace SemestralThesisOne.UserInterface.Hospital
     /// </summary>
     public partial class InsuranceReportWindow : Window
     {
-        public InsuranceReportWindow()
+        private HospitalManager _hospitalManager;
+
+        public InsuranceReportWindow(HospitalManager hospitalManager)
         {
+            _hospitalManager = hospitalManager;
             InitializeComponent();
         }
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
-            
+            //var patients = _hospitalManager.Get
         }
     }
 }
