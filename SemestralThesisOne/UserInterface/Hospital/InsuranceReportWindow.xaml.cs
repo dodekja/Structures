@@ -1,17 +1,8 @@
-﻿using SemestralThesisOne.Core.ViewModel;
+﻿using SemestralThesisOne.Core;
+using SemestralThesisOne.Core.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using SemestralThesisOne.Core.Model;
 
 namespace SemestralThesisOne.UserInterface.Hospital
 {
@@ -30,7 +21,43 @@ namespace SemestralThesisOne.UserInterface.Hospital
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
-            //var patients = _hospitalManager.Get
+            int daysOfHospitalizations = 0;
+            var patients = _hospitalManager.GetPatientsList(HospitalNameTextBox.Text);
+
+            PatientsTextBlock.Text = "";
+
+            int daysInMonth = DateTime.DaysInMonth(MonthDatePicker.SelectedDate.Value.Year, MonthDatePicker.SelectedDate.Value.Month);
+            for (int day = 1; day <= daysInMonth; day++)
+            {
+                DateTime currentDay = new DateTime(MonthDatePicker.SelectedDate.Value.Year, MonthDatePicker.SelectedDate.Value.Month, day);
+
+                PatientsTextBlock.Text += $"Day: {currentDay.ToShortDateString()}\n";
+                foreach (Core.Model.Patient patient in patients)
+                {
+                    if (Enums.GetStringFromInsuranceCompanyCode(patient.InsuranceCompanyCode) == InsuranceCompanyCodeComboBox.Text)
+                    {
+                        if (currentDay >= patient.CurrentHospitalization.Start)
+                        {
+                            daysOfHospitalizations++;
+                            PatientsTextBlock.Text += patient.ToString() + "\n";
+                        }
+                        else
+                        {
+                            foreach (var tuple in patient.HospitalizationsEnded.InOrder())
+                            {
+                                Hospitalization hospitalization = tuple.Item2;
+                                if (currentDay >= hospitalization.Start && currentDay <= patient.CurrentHospitalization.End)
+                                {
+                                    daysOfHospitalizations++;
+                                    PatientsTextBlock.Text += patient.ToString() + "\n";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            PatientsTextBlock.Text += $"Insurance: {InsuranceCompanyCodeComboBox.Text} Days: {daysOfHospitalizations}\n";
         }
     }
 }

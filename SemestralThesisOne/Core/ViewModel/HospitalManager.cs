@@ -30,6 +30,11 @@ namespace SemestralThesisOne.Core.ViewModel
             _hospitals.Get(hospitalName).AddPatient(patient);
         }
 
+        /// <summary>
+        /// Get all patients.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public List<Patient> GetPatientsList(string name)
         {
             Hospital? hospital = _hospitals.Get(name);
