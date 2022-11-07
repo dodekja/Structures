@@ -53,7 +53,7 @@
             <Button Name="OkButton" Click="OkButton_OnClick" IsDefault="True">OK</Button>
             <Button Name="CancelButton" IsCancel="True">Cancel</Button>
         </StackPanel>
-        <ScrollViewer Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Height="370" CanContentScroll="True" Margin="5,0,0,0">
+        <ScrollViewer Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Height="345" MaxWidth="835" CanContentScroll="True" Margin="5,0,0,0">
             <TextBlock TextWrapping="Wrap" Name="PatientsTextBlock"></TextBlock>
         </ScrollViewer>
     </Grid>

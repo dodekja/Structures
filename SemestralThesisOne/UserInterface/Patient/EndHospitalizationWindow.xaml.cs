@@ -1,6 +1,7 @@
 ﻿using SemestralThesisOne.Core.ViewModel;
 using System;
 using System.Windows;
+using SemestralThesisOne.Core.Generators;
 
 namespace SemestralThesisOne.UserInterface.Patient
 {
@@ -48,7 +49,9 @@ namespace SemestralThesisOne.UserInterface.Patient
                 if (_patient.IsHospitalized())
                 {
                     _hospitalManager.RemoveCurrentlyHospitalizedPatient(HospitalNameTextBox.Text, _patient);
-                    _patient.EndHospitalization(HospitalizationEndDatePicker.SelectedDate);
+                    DateTime dateTime = HospitalizationEndDatePicker.SelectedDate.Value;
+                    dateTime = DateTimeGenerator.AddRandomTime(dateTime);
+                    _patient.EndHospitalization(dateTime);
                     PatientsTextBlock.Text = _patient.ToString() + "\n";
                 }
                 else

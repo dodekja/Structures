@@ -1,6 +1,7 @@
 ﻿using SemestralThesisOne.Core.ViewModel;
 using System;
 using System.Windows;
+using SemestralThesisOne.Core.Generators;
 
 namespace SemestralThesisOne.UserInterface.Patient
 {
@@ -54,7 +55,9 @@ namespace SemestralThesisOne.UserInterface.Patient
                     {
                         if (!string.IsNullOrWhiteSpace(DiagnosisTextBox.Text))
                         {
-                            _patient.AddCurrentHospitalization(HospitalizationStartDatePicker.SelectedDate.Value, DiagnosisTextBox.Text);
+                            DateTime dateTime = HospitalizationStartDatePicker.SelectedDate.Value;
+                            dateTime = DateTimeGenerator.AddRandomTime(dateTime);
+                            _patient.AddCurrentHospitalization(dateTime, DiagnosisTextBox.Text);
                             _hospitalManager.AddCurrentlyHospitalizedPatient(HospitalNameTextBox.Text, _patient);
                             PatientsTextBlock.Text = _patient + "\n";
                         }

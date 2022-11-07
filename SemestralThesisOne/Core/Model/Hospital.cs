@@ -10,10 +10,8 @@ namespace SemestralThesisOne.Core.Model
 
         private BinarySearchTree<string, Patient> _patientsById;
         private BinarySearchTree<string, Patient> _patientsByName;
-        //TODO: change key to a compare class
         private BinarySearchTree<DateTime, Patient> _currentlyHospitalizedPatientsByDate;
         private BinarySearchTree<string, Patient> _currentlyHospitalizedPatientsById;
-        //TODO: change key to a compare class
         private BinarySearchTree<string, Patient> _hospitalizedPatientsById;
 
         public BinarySearchTree<string, Hospitalization> Hospitalizations { get; set; }
@@ -80,7 +78,6 @@ namespace SemestralThesisOne.Core.Model
         {
             if (patient.IsHospitalized())
             {
-                //TODO: Add patient ID to the key
                 _currentlyHospitalizedPatientsByDate.Add(patient.CurrentHospitalization.Start, patient);
                 _currentlyHospitalizedPatientsById.Add(patient.IdentificationNumber, patient);
             }
@@ -109,7 +106,6 @@ namespace SemestralThesisOne.Core.Model
         /// <returns></returns>
         public List<Patient?> GetPatientsRange(string patientName)
         {
-            //TODO: Change FindPatients By Name
             return _patientsByName.FindRange(patientName + "00000000000", patientName + "ZZZZZZZZZZZ");
         }
 
