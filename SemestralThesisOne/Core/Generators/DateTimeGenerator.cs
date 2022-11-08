@@ -10,7 +10,7 @@ namespace SemestralThesisOne.Core.Generators
             DateTime dt = start.AddDays(Random.Shared.Next(range));
             dt = dt.AddSeconds(Random.Shared.Next(60));
             dt = dt.AddMinutes(Random.Shared.Next(60));
-            dt = dt.AddHours(Random.Shared.Next(60));
+            dt = dt.AddHours(Random.Shared.Next(24));
             return dt;
         }
 
@@ -18,7 +18,7 @@ namespace SemestralThesisOne.Core.Generators
         {
             dateTime = dateTime.AddSeconds(Random.Shared.Next(60));
             dateTime = dateTime.AddMinutes(Random.Shared.Next(60));
-            dateTime = dateTime.AddHours(Random.Shared.Next(60));
+            dateTime = dateTime.AddHours(Random.Shared.Next(24));
             return dateTime;
         }
     }
