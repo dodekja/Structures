@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SemestralThesisOne.Core.Model
 {
@@ -31,6 +27,11 @@ namespace SemestralThesisOne.Core.Model
             {
                 return $"Start: {Start.ToShortDateString()} {Start.ToShortTimeString()} End: {End?.ToShortDateString()} {End?.ToShortTimeString()} Diag: {Diagnosis} ";
             }
+        }
+
+        public string ToCsvString()
+        {
+            return End.HasValue ? $"{Start.Ticks},{End.Value.Ticks},{Diagnosis}" : $"{Start.Ticks},{Diagnosis}";
         }
     }
 }

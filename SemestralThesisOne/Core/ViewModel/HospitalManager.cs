@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.VisualBasic.FileIO;
 using SemestralThesisOne.Core.Database;
 using SemestralThesisOne.Core.Model;
 
@@ -95,7 +96,7 @@ namespace SemestralThesisOne.Core.ViewModel
             List<Patient> patients = new List<Patient>();
             if (hospital != null)
             {
-                patients = hospital.GetAllCurrentlyHospitalizedPatientsRange(rangeStart,rangeEnd);
+                patients = hospital.GetAllCurrentlyHospitalizedPatientsRange(rangeStart, rangeEnd);
             }
 
             return patients;
@@ -152,6 +153,66 @@ namespace SemestralThesisOne.Core.ViewModel
         public void RemoveHospital(string toDelete, string newDocumentationOwner)
         {
             _hospitals.RemoveHospital(toDelete, newDocumentationOwner);
+        }
+
+        public void Save()
+        {
+            _hospitals.Save();
+        }
+
+        public void Load(PatientManager patientManager)
+        {
+            using (TextFieldParser hospitalParser = new TextFieldParser(@"..\..\..\Data\hospitals.csv"))
+            {
+                hospitalParser.SetDelimiters(",");
+                while (!hospitalParser.EndOfData)
+                {
+                    string[] fields = hospitalParser.ReadFields();
+                    string hospitalName = fields[0];
+                    _hospitals.Add(new Hospital(hospitalName));
+                }
+            }
+
+            using (TextFieldParser patientsParser = new TextFieldParser(@"..\..\..\Data\patients.csv"))
+            {
+                patientsParser.SetDelimiters(",");
+                while (!patientsParser.EndOfData)
+                {
+                    string[] fields = patientsParser.ReadFields();
+
+                    Hospital hospital = _hospitals.Get(fields[0]);
+                    Patient patient = new Patient(fields[1], fields[2], fields[3],
+                        new DateTime(long.Parse(fields[4])), Enums.GetInsuranceCompanyCodeFromString(fields[5]));
+                    hospital.AddPatient(patient);
+                    patientManager.AddNewRecord(patient);
+                }
+            }
+
+            using (TextFieldParser currentHospitalizationsParser = new TextFieldParser(@"..\..\..\Data\current_hospitalizations.csv"))
+            {
+                currentHospitalizationsParser.SetDelimiters(",");
+                while (!currentHospitalizationsParser.EndOfData)
+                {
+                    string[] fields = currentHospitalizationsParser.ReadFields();
+                    Hospital hospital = _hospitals.Get(fields[0]);
+                    Patient? patient = patientManager.GetPatient(fields[1]);
+                    patient.AddCurrentHospitalization(new DateTime(long.Parse(fields[2])), fields[3]);
+                    hospital.AddCurrentlyHospitalizedPatient(patient);
+                }
+            }
+
+            using (TextFieldParser endedHospitalizationsParser = new TextFieldParser(@"..\..\..\Data\ended_hospitalizations.csv"))
+            {
+                endedHospitalizationsParser.SetDelimiters(",");
+                while (!endedHospitalizationsParser.EndOfData)
+                {
+                    string[] fields = endedHospitalizationsParser.ReadFields();
+                    Patient? patient = patientManager.GetPatient(fields[0]);
+                    Hospitalization endedHospitalization = new Hospitalization(new DateTime(long.Parse(fields[1])),
+                        new DateTime(long.Parse(fields[2])), fields[3]);
+                    patient.SetEndedHospitalization(endedHospitalization);
+                }
+            }
         }
     }
 }

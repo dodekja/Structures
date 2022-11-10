@@ -1,17 +1,7 @@
 ﻿using SemestralThesisOne.Core.Generators;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using SemestralThesisOne.Core.ViewModel;
 
 namespace SemestralThesisOne.UserInterface.App
@@ -19,7 +9,7 @@ namespace SemestralThesisOne.UserInterface.App
     /// <summary>
     /// Interaction logic for GenerateDataWindow.xaml
     /// </summary>
-    public partial class GenerateDataWindow : Window
+    public partial class GenerateDataWindow
     {
         private HospitalManager _hospitalManager;
 
@@ -43,9 +33,9 @@ namespace SemestralThesisOne.UserInterface.App
                 numberOfPatients = int.Parse(PatientsTextBox.Text);
                 numberOfHospitalizations = int.Parse(HospitalizationsTextBox.Text);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                MessageBox.Show($"Values in the text boxes are not numbers.", "Error",
+                MessageBox.Show("Values in the text boxes are not numbers.", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             List<string> hospitals = new List<string>();
@@ -72,7 +62,7 @@ namespace SemestralThesisOne.UserInterface.App
                 }
             }
 
-            MessageBox.Show($"Data generated successfully.", "Success",
+            MessageBox.Show("Data generated successfully.", "Success",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }

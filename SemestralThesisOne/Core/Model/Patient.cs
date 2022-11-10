@@ -51,6 +51,11 @@ namespace SemestralThesisOne.Core.Model
             return str;
         }
 
+        public string ToCsvString()
+        {
+            return $"{FirstName},{LastName},{IdentificationNumber},{DateOfBirth.Ticks},{InsuranceCompanyCode}";
+        }
+
         public void AddCurrentHospitalization(DateTime start, string diagnosis)
         {
             CurrentHospitalization = new Hospitalization(start, null, diagnosis);

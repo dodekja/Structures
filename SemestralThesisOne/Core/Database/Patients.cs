@@ -26,5 +26,10 @@ namespace SemestralThesisOne.Core.Database
                 tuple.Item2.Balance();
             }
         }
+
+        public Patient? GetPatient(string id)
+        {
+            return PatientsByID.FindNoThrow(id);
+        }
     }
 }

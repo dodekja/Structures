@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows;
-using SemestralThesisOne.Core.Generators;
-using SemestralThesisOne.Core.Model;
+﻿using System.Windows;
 using SemestralThesisOne.UserInterface.App;
 using SemestralThesisOne.UserInterface.Hospital;
 using SemestralThesisOne.UserInterface.Patient;
@@ -113,6 +110,20 @@ namespace SemestralThesisOne
             ShowPatientsBetweenDatesWindow showPatientsBetweenDates =
                 new ShowPatientsBetweenDatesWindow(app.HospitalManager);
             showPatientsBetweenDates.ShowDialog();
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            app.HospitalManager.Save();
+            MessageBox.Show($"Save complete", "Success",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            app.HospitalManager.Load(app.PatientManager);
+            MessageBox.Show($"Load complete", "Success",
+                MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

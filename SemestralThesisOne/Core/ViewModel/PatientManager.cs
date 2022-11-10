@@ -18,6 +18,11 @@ namespace SemestralThesisOne.Core.ViewModel
             _patients.Add(patient);
         }
 
+        public Patient? GetPatient(string id)
+        {
+            return _patients.GetPatient(id);
+        }
+
         public void Balance()
         {
             _patients.Balance();

@@ -38,6 +38,11 @@ namespace SemestralThesisOne.Core.Model
             return _patientsById.InOrder();
         }
 
+        public List<BinaryTreeNode<string, Patient>> GetAllPatientsLevel()
+        {
+            return _patientsById.LevelOrder();
+        }
+
         public List<Tuple<DateTime, Patient>> GetAllCurrentlyHospitalizedPatients()
         {
             return _currentlyHospitalizedPatientsByDate.InOrder();

@@ -13,6 +13,7 @@
             <RowDefinition Height="35" />
             <RowDefinition Height="35" />
             <RowDefinition Height="35" />
+            <RowDefinition Height="35" />
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
@@ -40,7 +41,9 @@
         <Button Grid.Row="3" Grid.Column="1" Content="Balance Structures" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="100" Margin="5,5,5,5" Click="BalanceStructures"></Button>
         <Button Grid.Row="3" Grid.Column="2" Content="Remove Hospital" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="100" Margin="5,5,5,5" Click="RemoveHospital"></Button>
 
-        <Button Grid.Row="4" Grid.Column="0" Content="Quit" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="80" Margin="5,5,5,5" Click="Button_Click"/>
-
+        <Button Grid.Row="4" Grid.Column="0" Content="Save" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="80" Margin="5,5,5,5" Click="SaveButton_Click"/>
+        <Button Grid.Row="4" Grid.Column="1" Content="Load" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="80" Margin="5,5,5,5" Click="LoadButton_Click"/>
+        
+        <Button Grid.Row="5" Grid.Column="0" Content="Quit" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="80" Margin="5,5,5,5" Click="Button_Click"/>
 </Grid>
 </Window>

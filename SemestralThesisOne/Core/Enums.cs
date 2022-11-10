@@ -25,5 +25,20 @@ namespace SemestralThesisOne.Core
                     throw new ArgumentOutOfRangeException(nameof(code), code, "Invalid insurance company code provided.");
             }
         }
+
+        public static InsuranceCompanyCodes GetInsuranceCompanyCodeFromString(string insuranceCompany)
+        {
+            switch (insuranceCompany)
+            {
+                case "Dovera":
+                    return InsuranceCompanyCodes.Dovera;
+                case "VSZP":
+                    return InsuranceCompanyCodes.VSZP;
+                case "Union":
+                    return InsuranceCompanyCodes.Union;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(insuranceCompany), insuranceCompany, "Invalid insurance company name provided.");
+            }
+        }
     }
 }

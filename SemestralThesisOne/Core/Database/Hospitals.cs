@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Windows;
 using SemestralThesisOne.Core.Model;
 using Structures.Tree;
@@ -77,7 +79,42 @@ namespace SemestralThesisOne.Core.Database
 
             newOwner.AddPatients(deleted.GetAllPatients());
             newOwner.AddCurrentlyHospitalizedPatients(deleted.GetAllCurrentlyHospitalizedPatients());
+        }
 
+        public void Save()
+        {
+            StringBuilder hospitalsText = new StringBuilder();
+            StringBuilder patientsText = new StringBuilder();
+            StringBuilder currentHospitalizationsText = new StringBuilder();
+            StringBuilder endedHospitalizationsText = new StringBuilder();
+            var levelOrder = _tree.LevelOrder();
+            List<Hospital> hospitals = new List<Hospital>();
+            foreach (var hospitalNode in levelOrder)
+            {
+                Hospital hospital = hospitalNode.Data;
+                hospitalsText.AppendLine($"{hospital.ToString()}");
+                var patients = hospital.GetAllPatientsLevel();
+                foreach (var node in patients)
+                {
+                    Patient patient = node.Data;
+                    patientsText.AppendLine($"{hospital.ToString()},{patient.ToCsvString()}");
+                    if (patient.IsHospitalized())
+                    {
+                        currentHospitalizationsText.AppendLine(
+                            $"{hospital.Name},{patient.IdentificationNumber},{patient.CurrentHospitalization.ToCsvString()}");
+                    }
+
+                    foreach (var endedHospitalizationNode in patient.HospitalizationsEnded.LevelOrder())
+                    {
+                        endedHospitalizationsText.AppendLine($"{patient.IdentificationNumber},{endedHospitalizationNode.Data.ToCsvString()}");
+                    }
+                }
+            }
+            File.WriteAllText(@"..\..\..\Data\hospitals.csv",hospitalsText.ToString());
+            File.WriteAllText(@"..\..\..\Data\patients.csv", patientsText.ToString());
+            File.WriteAllText(@"..\..\..\Data\current_hospitalizations.csv", currentHospitalizationsText.ToString());
+            File.WriteAllText(@"..\..\..\Data\ended_hospitalizations.csv", endedHospitalizationsText.ToString());
+            
         }
     }
 }
