@@ -33,40 +33,40 @@ namespace SemestralThesisOne.Core.Model
             _patientsByName.Add(patient.FirstName + patient.LastName + patient.IdentificationNumber, patient);
         }
 
-        public List<Tuple<string, Patient>> GetAllPatients()
+        public List<Patient> GetAllPatients()
         {
-            return _patientsById.InOrder();
+            return _patientsById.InOrderData();
         }
 
-        public List<BinaryTreeNode<string, Patient>> GetAllPatientsLevel()
+        public List<Patient> GetAllPatientsLevel()
         {
-            return _patientsById.LevelOrder();
+            return _patientsById.LevelOrderData();
         }
 
-        public List<Tuple<DateTime, Patient>> GetAllCurrentlyHospitalizedPatients()
+        public List<Patient> GetAllCurrentlyHospitalizedPatients()
         {
-            return _currentlyHospitalizedPatientsByDate.InOrder();
+            return _currentlyHospitalizedPatientsByDate.InOrderData();
         }
 
-        public void AddCurrentlyHospitalizedPatients(List<Tuple<DateTime, Patient>> data)
+        public void AddCurrentlyHospitalizedPatients(List<Patient> data)
         {
-            foreach (var tuple in data)
+            foreach (var patient in data)
             {
-                AddCurrentlyHospitalizedPatient(tuple.Item2);
+                AddCurrentlyHospitalizedPatient(patient);
             }
         }
 
-        public void AddPatients(List<Tuple<string, Patient>> data)
+        public void AddPatients(List<Patient> data)
         {
-            foreach (var tuple in data)
+            foreach (var patient in data)
             {
-                AddPatient(tuple.Item2);
+                AddPatient(patient);
             }
         }
 
-        public List<Tuple<string, Patient>> GetAllCurrentlyHospitalizedPatientsById()
+        public List<Patient> GetAllCurrentlyHospitalizedPatientsById()
         {
-            return _currentlyHospitalizedPatientsById.InOrder();
+            return _currentlyHospitalizedPatientsById.InOrderData();
         }
 
         public List<Patient> GetAllCurrentlyHospitalizedPatientsRange(DateTime rangeStart, DateTime rangeEnd)

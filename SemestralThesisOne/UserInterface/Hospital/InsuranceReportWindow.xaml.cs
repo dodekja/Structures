@@ -43,9 +43,8 @@ namespace SemestralThesisOne.UserInterface.Hospital
                         }
                         else
                         {
-                            foreach (var tuple in patient.HospitalizationsEnded.InOrder())
+                            foreach (var hospitalization in patient.HospitalizationsEnded.InOrderData())
                             {
-                                Hospitalization hospitalization = tuple.Item2;
                                 if (currentDay >= hospitalization.Start && currentDay <= patient.CurrentHospitalization.End)
                                 {
                                     daysOfHospitalizations++;

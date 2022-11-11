@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.Design;
-
-namespace Structures.Tree
+﻿namespace Structures.Tree
 {
     public class BinarySearchTree<TKey, TData> : AbstractTree<TKey, TData> where TKey : IComparable<TKey>, IEquatable<TKey>
     {
@@ -22,7 +20,6 @@ namespace Structures.Tree
             Root = null;
             Count = 0;
         }
-
 
         /// <summary>
         /// Add an item to the tree containing the data given identified by key.
@@ -449,7 +446,32 @@ namespace Structures.Tree
                     currentNode = currentNode.GetRightSon();
                 }
             }
+            return path;
+        }
 
+        public List<TData?> InOrderData()
+        {
+            List<TData?> path = new(Count);
+            BinaryTreeNode<TKey, TData?>? currentNode = Root as BinaryTreeNode<TKey, TData?>;
+
+            if (Root != null)
+            {
+                Stack<BinaryTreeNode<TKey, TData?>> stack = new(Count);
+                while (currentNode != null || stack.Count > 0)
+                {
+                    while (currentNode != null)
+                    {
+                        stack.Push(currentNode);
+                        currentNode = currentNode.GetLeftSon();
+                    }
+
+                    currentNode = stack.Pop();
+
+                    path.Add(currentNode.Data);
+
+                    currentNode = currentNode.GetRightSon();
+                }
+            }
             return path;
         }
 
@@ -475,6 +497,30 @@ namespace Structures.Tree
                 }
             }
             return nodes;
+        }
+
+        public List<TData?> LevelOrderData()
+        {
+            List<TData?> data = new List<TData?>(Count);
+            if (Root != null)
+            {
+                Queue<BinaryTreeNode<TKey, TData?>> level = new Queue<BinaryTreeNode<TKey, TData?>>();
+                level.Enqueue((Root as BinaryTreeNode<TKey, TData?>)!);
+                BinaryTreeNode<TKey, TData?> node;
+                while (level.Count > 0)
+                {
+                    node = level.Dequeue();
+                    data.Add(node.Data);
+                    foreach (AbstractTreeNode<TKey, TData?>? child in node.Children)
+                    {
+                        if (child != null)
+                        {
+                            level.Enqueue(child as BinaryTreeNode<TKey, TData?>);
+                        }
+                    }
+                }
+            }
+            return data;
         }
 
         public void RotateNodeLeft(BinaryTreeNode<TKey, TData?> node)

@@ -43,9 +43,9 @@ namespace SemestralThesisOne.Core.Model
             if (HospitalizationsEnded.Count > 0)
             {
                 str += " Past Hos.: ";
-                foreach (var tuple in HospitalizationsEnded.InOrder())
+                foreach (var hospitalization in HospitalizationsEnded.InOrderData())
                 {
-                    str += $"{tuple.Item2.ToString()}";
+                    str += $"{hospitalization}";
                 }
             }
             return str;

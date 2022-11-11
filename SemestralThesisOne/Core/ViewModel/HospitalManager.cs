@@ -39,16 +39,10 @@ namespace SemestralThesisOne.Core.ViewModel
         public List<Patient> GetPatientsList(string name)
         {
             Hospital? hospital = _hospitals.Get(name);
-            List<Tuple<string, Patient>> inOrderList = new List<Tuple<string, Patient>>();
+            List<Patient> patients = new List<Patient>();
             if (hospital != null)
             {
-                inOrderList = hospital.GetAllPatients();
-            }
-
-            List<Patient> patients = new List<Patient>();
-            foreach (var item in inOrderList)
-            {
-                patients.Add(item.Item2);
+                patients = hospital.GetAllPatients();
             }
 
             return patients;
@@ -57,36 +51,22 @@ namespace SemestralThesisOne.Core.ViewModel
         public List<Patient> GetCurrentlyHospitalizedPatients(string hospitalName)
         {
             Hospital? hospital = _hospitals.Get(hospitalName);
-            List<Tuple<DateTime, Patient>> inOrderList = new List<Tuple<DateTime, Patient>>();
+            List<Patient> patients = new List<Patient>();
             if (hospital != null)
             {
-                inOrderList = hospital.GetAllCurrentlyHospitalizedPatients();
+                patients = hospital.GetAllCurrentlyHospitalizedPatients();
             }
-
-            List<Patient> patients = new List<Patient>();
-            foreach (var item in inOrderList)
-            {
-                patients.Add(item.Item2);
-            }
-
             return patients;
         }
 
         public List<Patient> GetCurrentlyHospitalizedPatientsById(string hospitalName)
         {
             Hospital? hospital = _hospitals.Get(hospitalName);
-            List<Tuple<string, Patient>> inOrderList = new List<Tuple<string, Patient>>();
+            List<Patient> patients = new List<Patient>();
             if (hospital != null)
             {
-                inOrderList = hospital.GetAllCurrentlyHospitalizedPatientsById();
+                patients = hospital.GetAllCurrentlyHospitalizedPatientsById();
             }
-
-            List<Patient> patients = new List<Patient>();
-            foreach (var item in inOrderList)
-            {
-                patients.Add(item.Item2);
-            }
-
             return patients;
         }
 

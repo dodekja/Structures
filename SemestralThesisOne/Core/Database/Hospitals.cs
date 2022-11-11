@@ -35,13 +35,7 @@ namespace SemestralThesisOne.Core.Database
 
         public List<Hospital> GetAllHospitals()
         {
-            var inorder = _tree.InOrder();
-            List<Hospital> hospitals = new List<Hospital>();
-            foreach (var tuple in inorder)
-            {
-                hospitals.Add(tuple.Item2);
-            }
-
+            var hospitals = _tree.InOrderData();
             return hospitals;
         }
 
@@ -87,16 +81,13 @@ namespace SemestralThesisOne.Core.Database
             StringBuilder patientsText = new StringBuilder();
             StringBuilder currentHospitalizationsText = new StringBuilder();
             StringBuilder endedHospitalizationsText = new StringBuilder();
-            var levelOrder = _tree.LevelOrder();
-            List<Hospital> hospitals = new List<Hospital>();
-            foreach (var hospitalNode in levelOrder)
+            var levelOrder = _tree.LevelOrderData();
+            foreach (Hospital hospital in levelOrder)
             {
-                Hospital hospital = hospitalNode.Data;
                 hospitalsText.AppendLine($"{hospital.ToString()}");
                 var patients = hospital.GetAllPatientsLevel();
-                foreach (var node in patients)
+                foreach (var patient in patients)
                 {
-                    Patient patient = node.Data;
                     patientsText.AppendLine($"{hospital.ToString()},{patient.ToCsvString()}");
                     if (patient.IsHospitalized())
                     {
@@ -104,9 +95,9 @@ namespace SemestralThesisOne.Core.Database
                             $"{hospital.Name},{patient.IdentificationNumber},{patient.CurrentHospitalization.ToCsvString()}");
                     }
 
-                    foreach (var endedHospitalizationNode in patient.HospitalizationsEnded.LevelOrder())
+                    foreach (var endedHospitalization in patient.HospitalizationsEnded.LevelOrderData())
                     {
-                        endedHospitalizationsText.AppendLine($"{patient.IdentificationNumber},{endedHospitalizationNode.Data.ToCsvString()}");
+                        endedHospitalizationsText.AppendLine($"{patient.IdentificationNumber},{endedHospitalization.ToCsvString()}");
                     }
                 }
             }

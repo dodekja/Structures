@@ -44,9 +44,8 @@ namespace SemestralThesisOne.UserInterface.Hospital
                     }
                     else
                     {
-                        foreach (var tuple in patient.HospitalizationsEnded.InOrder())
+                        foreach (var hospitalization in patient.HospitalizationsEnded.InOrderData())
                         {
-                            Hospitalization hospitalization = tuple.Item2;
                             if (hospitalization.Start >= FromDatePicker.SelectedDate.Value && patient.CurrentHospitalization.Start < ToDatePicker.SelectedDate.Value ||
                                 hospitalization.End >= FromDatePicker.SelectedDate.Value && patient.CurrentHospitalization.End < ToDatePicker.SelectedDate.Value)
                             {
