@@ -1,17 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using SemestralThesisOne.Core.Model;
 using SemestralThesisOne.Core.ViewModel;
 
 namespace SemestralThesisOne.UserInterface.Hospital
@@ -34,7 +22,7 @@ namespace SemestralThesisOne.UserInterface.Hospital
             PatientsTextBlock.Text = "";
             try
             {
-                var patientsList = _hospitalManager.GetPatientsList(NameTextBox.Text);
+                var patientsList = _hospitalManager.GetHospitalizedPatientsList(NameTextBox.Text);
                 foreach (var patient in patientsList)
                 {
                     if (patient.CurrentHospitalization.Start >= FromDatePicker.SelectedDate.Value &&

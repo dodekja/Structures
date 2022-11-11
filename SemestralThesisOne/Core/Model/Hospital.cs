@@ -38,6 +38,11 @@ namespace SemestralThesisOne.Core.Model
             return _patientsById.InOrderData();
         }
 
+        public List<Patient> GetAllHospitalizedPatients()
+        {
+            return _hospitalizedPatientsById.InOrderData();
+        }
+
         public List<Patient> GetAllPatientsLevel()
         {
             return _patientsById.LevelOrderData();

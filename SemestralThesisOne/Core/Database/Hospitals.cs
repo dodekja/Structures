@@ -67,6 +67,7 @@ namespace SemestralThesisOne.Core.Database
             }
             catch (Exception e)
             {
+                _tree.Add(deleted.Name,deleted);
                 MessageBox.Show($"Hospital {newDocumentationOwnerName} does not exist", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }

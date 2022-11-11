@@ -194,5 +194,17 @@ namespace SemestralThesisOne.Core.ViewModel
                 }
             }
         }
+
+        public List<Patient> GetHospitalizedPatientsList(string name)
+        {
+            Hospital? hospital = _hospitals.Get(name);
+            List<Patient> patients = new List<Patient>();
+            if (hospital != null)
+            {
+                patients = hospital.GetAllHospitalizedPatients();
+            }
+
+            return patients;
+        }
     }
 }
