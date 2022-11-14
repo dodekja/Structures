@@ -1,6 +1,5 @@
-using System.Security.Cryptography;
-using System.Security.Principal;
 using Structures.Tree;
+using System.Collections.Generic;
 using TestStructures.Generator;
 
 namespace TestStructures
@@ -19,22 +18,22 @@ namespace TestStructures
         {
             //Arrange
             var item = (1, 1);
-            Tree.Add(item.Item1,item.Item2);
-            
+            Tree.Add(item.Item1, item.Item2);
+
             //Act
             Tree.RotateNodeLeft(Tree.FindNode(item.Item1));
 
             //Assert
             Assert.True(Tree.Count == 1 && Tree.InOrder().Count == 1, $"Expected tree size is 1, actual was {Tree.InOrder().Count}");
         }
-        
+
         [Fact]
         public void RotateSingleItemRight()
         {
             //Arrange
             var item = (1, 1);
-            Tree.Add(item.Item1,item.Item2);
-            
+            Tree.Add(item.Item1, item.Item2);
+
             //Act
             Tree.RotateNodeRight(Tree.FindNode(item.Item1));
 
@@ -49,13 +48,13 @@ namespace TestStructures
             //Arrange
             foreach (var key in keys)
             {
-                Tree.Add(key,key);
+                Tree.Add(key, key);
             }
 
             //Act
             Tree.RotateNodeLeft(Tree.FindNode(keyToRotate));
 
-               //Assert
+            //Assert
             Assert.True(Tree.Count == keys.Length && Tree.InOrder().Count == keys.Length, $"Expected tree size is {keys.Length}, actual was {Tree.InOrder().Count}");
         }
 
@@ -90,7 +89,7 @@ namespace TestStructures
             Assert.True(data == 1, $"Item found was {data}, should be {item.Item1}.");
         }
 
-        
+
         [Fact]
         public void FindEmptyTree()
         {
@@ -134,10 +133,88 @@ namespace TestStructures
                     found = false;
                 }
             }
-            
+
             //Assert
             Assert.True(found);
+        }
 
+        [Fact]
+        public void FindRangeEmtpyTree()
+        {
+            //Arrange && Act
+            var result = Tree.FindRange(0, 10);
+
+            //Assert
+            Assert.True(result is { Count: 0 });
+        }
+
+
+        [Theory]
+        [MemberData(nameof(FindRangeTestData))]
+        public void FindRangeManualInput(List<(long, long)> data, int start, int end)
+        {
+            //Arrange
+            Tree.InsertRange(data);
+
+            //Act
+            var result = Tree.FindRange(start, end);
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < result.Count; controlIndex++)
+            {
+                if (result[controlIndex] >= start && result[controlIndex] <= end)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+
+            Assert.True(equals, $"The list contains an item that is outside the range <{start};{end}> at index: {controlIndex}");
+        }
+        
+        [Theory]
+        [InlineData(0,10,2,4)]
+        [InlineData(0,1000,20,400)]
+        [InlineData(0,1000,20,900)]
+        [InlineData(-1000,1000,-200,900)]
+        [InlineData(0,1000,-100,2000)]
+        [InlineData(0,100,-100,50)]
+        [InlineData(0,100,50,200)]
+        public void FindRangeGeneratedInput(int itemsStart, int itemsEnd, int rangeStart, int rangeEnd)
+        {
+            //Arrange
+            for (int itemIndex = itemsStart; itemIndex < itemsEnd; itemIndex++)
+            {
+                Tree.Add(itemIndex,itemIndex);
+            }
+
+            //Act
+            var result = Tree.FindRange(rangeStart, rangeEnd);
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            for (controlIndex = 0; controlIndex < result.Count; controlIndex++)
+            {
+                if (result[controlIndex] >= rangeStart && result[controlIndex] <= rangeEnd)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+
+            Assert.True(equals, $"The list contains an item that is outside the range <{rangeStart};{rangeEnd}> at index: {controlIndex}");
         }
 
         [Fact]
@@ -153,6 +230,53 @@ namespace TestStructures
 
             //Assert
             Assert.True(treeSize == 1, $"Tree size is {treeSize}, should be 1.");
+        }
+
+        [Theory]
+        [InlineData(10,0)]
+        [InlineData(100,0)]
+        [InlineData(1000,0)]
+        [InlineData(10000,0)]
+        [InlineData(100000,0)]
+        [InlineData(1000000,0)]
+        [InlineData(10000000,0)]
+        public void InsertWithBalance(int countOfNodes, int? seed)
+        {
+            //Arrange && Act
+            List<BinaryTreeNode<long, long>> actualList = new List<BinaryTreeNode<long, long>>(countOfNodes);
+            Random random = new Random(seed ?? 0);
+            for (int index = 0; index < countOfNodes; index++)
+            {
+                int number = random.Next();
+                try
+                {
+                    Tree.AddWithBalance(number, number);
+                }
+                catch (Exception)
+                {
+                    index--;
+                }
+            }
+
+            //Assert
+            actualList = Tree.LevelOrder();
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
+            {
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
         }
 
         [Theory]
@@ -172,7 +296,7 @@ namespace TestStructures
             for (long i = 0; i < count; i++)
             {
                 key = generator.NextInt64();
-                Tree.Add(key,key);
+                Tree.Add(key, key);
             }
             actualCount = Tree.InOrder().Count();
 
@@ -230,7 +354,7 @@ namespace TestStructures
         [InlineData(1000)]
         [InlineData(10000)]
         [InlineData(50000)]
-        public void RemoveMutlipleRandomItems(int count)
+        public void RemoveMultipleRandomItems(int count)
         {
             //Arrange
             var generator = new Random();
@@ -274,6 +398,66 @@ namespace TestStructures
         }
 
         [Fact]
+        public void LevelOrderTraversalEmpty()
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>> list;
+
+            //Act
+            list = Tree?.LevelOrder();
+
+            //Assert
+            Assert.True(list is { Count: 0 });
+        }
+
+        [Fact]
+        public void LevelOrderTraversalSingleItem()
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>> list;
+            Tree.Add(1, 1);
+
+            //Act
+            list = Tree?.LevelOrder();
+
+            //Assert
+            Assert.True(list is { Count: 1 });
+        }
+
+        [Theory]
+        [MemberData(nameof(LevelOrderTraversalMultipleItemsData))]
+        public void LevelOrderTraversalMultipleItems(List<BinaryTreeNode<long, long>> itemsToInsert, List<BinaryTreeNode<long, long>> expectedList)
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>> actualList;
+            foreach (BinaryTreeNode<long, long> item in itemsToInsert)
+            {
+                Tree.Add(item.Key, item.Data);
+            }
+
+            //Act
+            actualList = Tree?.LevelOrder();
+
+
+            //Assert
+            bool equals = true;
+            int index;
+            for (index = 0; index < actualList.Count; index++)
+            {
+                if (actualList[index].Key == expectedList[index].Key)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"The actual list differs from the expected at index {index}.");
+        }
+
+        [Fact]
         public void InOrderTraversalSingleItem()
         {
             //Arrange
@@ -312,13 +496,12 @@ namespace TestStructures
         public void IntegrationTests(int addCount, int removeCount, int getCount, int? seed = null)
         {
             //Arrange
-            TreeOperationsGenerator generator;
-            generator = new TreeOperationsGenerator(addCount, removeCount, getCount, seed);
+            var generator = new TreeOperationsGenerator(addCount, removeCount, getCount, seed);
             long key = 0;
             int operationsPerformed = addCount - removeCount;
 
             TreeOperations operation;
-            
+
             //Act
 
             for (long index = 0; index < (addCount + removeCount + getCount); index++)
@@ -364,6 +547,187 @@ namespace TestStructures
             Assert.True(Tree.Count == operationsPerformed, $"Actual Count was {Tree.Count}, expected {operationsPerformed}");
         }
 
+        [Theory]
+        [MemberData(nameof(InsertRangeTestData))]
+        public void InsertRangeManual(List<(long, long)> data)
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>>? actualList;
+
+            //Act
+            Tree.InsertRange(data);
+            actualList = Tree?.LevelOrder();
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
+            {
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
+        }
+
+        [Theory]
+        [InlineData(-1000000, 0)]
+        [InlineData(-100000, 0)]
+        [InlineData(-10000, 0)]
+        [InlineData(-1000, 0)]
+        [InlineData(-100, 0)]
+        [InlineData(-10, 0)]
+        [InlineData(-1, 0)]
+        [InlineData(0, 0)]
+        [InlineData(0, 1)]
+        [InlineData(0,10)]
+        [InlineData(0,100)]
+        [InlineData(0,1000)]
+        [InlineData(0,10000)]
+        [InlineData(0,100000)]
+        [InlineData(0,1000000)]
+        [InlineData(0,10000000)]
+        [InlineData(-3,10000000)]
+        public void InsertRangeGenerated(int start, int end)
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>>? actualList;
+            List<(long, long)> data = new List<(long, long)>(end-start);
+            for (int index = start; index < end; index++)
+            {
+                data.Add(new (index,index));
+            }
+
+            //Act
+            Tree.InsertRange(data);
+            actualList = Tree?.LevelOrder();
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
+            {
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
+        }
+
+        [Fact]
+        public void BalanceEmptyTree()
+        {
+            //Arrange
+            Exception? ex;
+
+            //Act
+            ex = Record.Exception(() => Tree.Balance());
+
+            //Assert
+            Assert.Null(ex);
+        }
+
+        [Theory]
+        [MemberData(nameof(BalanceTreeData))]
+        public void BalanceTreeManualInput(List<BinaryTreeNode<long, long>> insertNodes, List<long> expectedKeysOrder)
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>> actualList;
+            foreach (BinaryTreeNode<long, long> item in insertNodes)
+            {
+                Tree.Add(item.Key, item.Data);
+            }
+
+            //Act
+            Tree.Balance();
+            actualList = Tree?.LevelOrder();
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
+            {
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
+        }
+
+        [Theory]
+        [InlineData(10,0)]
+        [InlineData(100,0)]
+        [InlineData(1000,0)]
+        [InlineData(10000,0)]
+        [InlineData(100000,0)]
+        [InlineData(1000000,0)]
+        public void BalanceTreeGeneratedInput(int countOfNodes, int? seed)
+        {
+            //Arrange
+            List<BinaryTreeNode<long, long>> actualList = new List<BinaryTreeNode<long, long>>(countOfNodes);
+            Random random = new Random(seed ?? 0);
+            for (int index = 0; index < countOfNodes; index++)
+            {
+                int number = random.Next();
+                try
+                {
+                    Tree.Add(number, number);
+                }
+                catch (Exception)
+                {
+                    index--;
+                }
+            }
+
+            //Act
+            Tree.Balance();
+            actualList = Tree?.LevelOrder();
+
+            //Assert
+            bool equals = true;
+            int controlIndex;
+            int subtreeDifference = 0;
+            for (controlIndex = 0; controlIndex < actualList.Count; controlIndex++)
+            {
+                subtreeDifference = actualList[controlIndex].GetSubtreeDifference();
+                if (subtreeDifference == 1 || subtreeDifference == 0 || subtreeDifference == -1)
+                {
+                    equals = true;
+                }
+                else
+                {
+                    equals = false;
+                    break;
+                }
+            }
+            Assert.True(equals, $"Actual and expected lists differ at index {controlIndex} with subtree difference {subtreeDifference}");
+
+        }
+
         public static IEnumerable<object[]> IntegrationTestsData =>
             new List<object[]>
             {
@@ -387,7 +751,7 @@ namespace TestStructures
                 {
                     10000000, 5000000, 10000000, 1
                 },
-                
+
             };
 
         public static IEnumerable<object[]> InOrderTraversalMultipleItemsData =>
@@ -405,8 +769,49 @@ namespace TestStructures
                 },
                 new object[] {new List<Tuple<long,long>> {new(30,30), new(20,20), new(40,40), new(15,15), new(25,25), new(35,35), new(50,50),
                         new(5, 5), new(18, 18), new(45, 45), new(60, 60) },
-                    new List<Tuple<long,long>> {new(5,5), new(15,15), new(18,18), new(20,20), new(25,25), new(30,30), new(35,35),
+                    new List<Tuple<long, long>> {new(5,5), new(15,15), new(18,18), new(20,20), new(25,25), new(30,30), new(35,35),
                         new(40, 40), new(45, 45), new(50, 50), new(60, 60) }
+                },
+
+            };
+
+        public static IEnumerable<object[]> BalanceTreeData =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new List<BinaryTreeNode<long,long>> {new(5,5), new(10,10), new(11,11), new(20,20), new(30,30), new(40,40), new(45,45)},
+                    new List<long> {20,10,40,5,11,30,45}
+                },
+                new object[]
+                {
+                    new List<BinaryTreeNode<long,long>> {new(45,45), new(40, 40), new(30, 30), new(20, 20), new(11, 11), new(10, 10), new(5,5) },
+                    new List<long> {20,10,40,5,11,30,45}
+                },
+                new object[]
+                {
+                    new List<BinaryTreeNode<long,long>> {new(45,45), new(5, 5), new(40, 40), new(10, 10), new(30, 30), new(11, 11), new(20, 20)   },
+                    new List<long> {11,5,30,10,20,45,40}
+                },
+            };
+
+        public static IEnumerable<object[]> LevelOrderTraversalMultipleItemsData =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new List<BinaryTreeNode<long,long>> {new(5,5), new(10,10), new(11,11), new(20,20), new(30,30), new(40,40), new(45,45)},
+                    new List<BinaryTreeNode<long,long>> {new(5,5), new(10,10), new(11,11), new(20,20), new(30,30), new(40,40), new(45,45)}
+                },
+                new object[] {new List<BinaryTreeNode<long,long>> {new(5,5), new(15,15), new(18,18), new(20,20), new(25,25), new(30,30), new(35,35),
+                        new(40, 40), new(45, 45), new(50, 50), new(60, 60) },
+                    new List<BinaryTreeNode<long,long>> {new(5,5), new(15,15), new(18,18), new(20,20), new(25,25), new(30,30), new(35,35),
+                        new(40, 40), new(45, 45), new(50, 50), new(60, 60) }
+                },
+                new object[] {new List<BinaryTreeNode<long,long>> {new(30,30), new(20,20), new(40,40), new(15,15), new(25,25), new(35,35), new(50,50),
+                        new(5, 5), new(18, 18), new(45, 45), new(60, 60) },
+                    new List<BinaryTreeNode<long,long>> {new(30,30), new(20,20), new(40,40), new(15,15), new(25,25), new(35,35), new(50,50),
+                        new(5, 5), new(18, 18), new(45, 45), new(60, 60) }
                 },
 
             };
@@ -491,32 +896,72 @@ namespace TestStructures
             {
                 new object[]
                 {
-                    new int[] {1,2},2
+                    new[] {1,2},2
                 },
                 new object[]
                 {
-                    new int[] {1,2},1
+                    new[] {1,2},1
                 },
                 new object[]
                 {
-                    new int[] {2,1},1
+                    new[] {2,1},1
                 },
                 new object[]
                 {
-                    new int[] {2,1},2
+                    new[] {2,1},2
                 },
                 new object[]
                 {
-                    new int[] {2,1,3},2
+                    new[] {2,1,3},2
                 },
                 new object[]
                 {
-                    new int[] {2,1,3},1
+                    new[] {2,1,3},1
                 },
                 new object[]
                 {
-                    new int[] {2,1,3},3
+                    new[] {2,1,3},3
                 },
+            };
+
+        public static IEnumerable<object[]> InsertRangeTestData =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new List<(long,long)> {(1,1)},
+                },
+                new object[]
+                {
+                    new List<(long,long)> {(1,1), (2, 2), (3, 3), (4, 4)}
+                },
+                new object[]
+                {
+                    new List<(long,long)> {  (4, 4), (3, 3), (2, 2), (1,1)}
+                }
+            };
+
+        public static IEnumerable<object[]> FindRangeTestData =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new List<(long,long)> {(1,1)},
+                    0,
+                    1
+                },
+                new object[]
+                {
+                    new List<(long,long)> {(1,1), (2, 2), (3, 3), (4, 4)},
+                    0,
+                    2
+                },
+                new object[]
+                {
+                    new List<(long,long)> {  (4, 4), (3, 3), (2, 2), (1,1)},
+                    0,
+                    2
+                }
             };
 
         public void Dispose()
