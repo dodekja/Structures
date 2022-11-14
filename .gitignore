@@ -554,3 +554,7 @@ git_stats/*
 StyleCop.Cache
 bin
 obj
+/SemestralThesisOne/Data/patients.csv
+/SemestralThesisOne/Data/hospitals.csv
+/SemestralThesisOne/Data/ended_hospitalizations.csv
+/SemestralThesisOne/Data/current_hospitalizations.csv
