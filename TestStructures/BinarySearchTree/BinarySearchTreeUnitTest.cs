@@ -1,8 +1,7 @@
 using Structures.Tree;
-using System.Collections.Generic;
 using TestStructures.Generator;
 
-namespace TestStructures
+namespace TestStructures.BinarySearchTree
 {
     public class BinarySearchTreeUnitTest : IDisposable
     {
@@ -178,21 +177,21 @@ namespace TestStructures
 
             Assert.True(equals, $"The list contains an item that is outside the range <{start};{end}> at index: {controlIndex}");
         }
-        
+
         [Theory]
-        [InlineData(0,10,2,4)]
-        [InlineData(0,1000,20,400)]
-        [InlineData(0,1000,20,900)]
-        [InlineData(-1000,1000,-200,900)]
-        [InlineData(0,1000,-100,2000)]
-        [InlineData(0,100,-100,50)]
-        [InlineData(0,100,50,200)]
+        [InlineData(0, 10, 2, 4)]
+        [InlineData(0, 1000, 20, 400)]
+        [InlineData(0, 1000, 20, 900)]
+        [InlineData(-1000, 1000, -200, 900)]
+        [InlineData(0, 1000, -100, 2000)]
+        [InlineData(0, 100, -100, 50)]
+        [InlineData(0, 100, 50, 200)]
         public void FindRangeGeneratedInput(int itemsStart, int itemsEnd, int rangeStart, int rangeEnd)
         {
             //Arrange
             for (int itemIndex = itemsStart; itemIndex < itemsEnd; itemIndex++)
             {
-                Tree.Add(itemIndex,itemIndex);
+                Tree.Add(itemIndex, itemIndex);
             }
 
             //Act
@@ -233,13 +232,13 @@ namespace TestStructures
         }
 
         [Theory]
-        [InlineData(10,0)]
-        [InlineData(100,0)]
-        [InlineData(1000,0)]
-        [InlineData(10000,0)]
-        [InlineData(100000,0)]
-        [InlineData(1000000,0)]
-        [InlineData(10000000,0)]
+        [InlineData(10, 0)]
+        [InlineData(100, 0)]
+        [InlineData(1000, 0)]
+        [InlineData(10000, 0)]
+        [InlineData(100000, 0)]
+        [InlineData(1000000, 0)]
+        [InlineData(10000000, 0)]
         public void InsertWithBalance(int countOfNodes, int? seed)
         {
             //Arrange && Act
@@ -333,7 +332,7 @@ namespace TestStructures
         public void RemoveSpecialCases(List<long> keys, long keyToRemove)
         {
             //Arrange
-            int expectedCount = (keys.Count - 1);
+            int expectedCount = keys.Count - 1;
             int actualCount;
             foreach (var key in keys)
             {
@@ -496,20 +495,20 @@ namespace TestStructures
         public void IntegrationTests(int addCount, int removeCount, int getCount, int? seed = null)
         {
             //Arrange
-            var generator = new TreeOperationsGenerator(addCount, removeCount, getCount, seed);
+            var generator = new OperationsGenerator(addCount, removeCount, getCount, seed);
             long key = 0;
             int operationsPerformed = addCount - removeCount;
 
-            TreeOperations operation;
+            Operations operation;
 
             //Act
 
-            for (long index = 0; index < (addCount + removeCount + getCount); index++)
+            for (long index = 0; index < addCount + removeCount + getCount; index++)
             {
                 operation = generator.GenerateOperation();
                 switch (operation)
                 {
-                    case TreeOperations.Add:
+                    case Operations.Add:
                         key = generator.GenerateKey(operation);
                         try
                         {
@@ -520,7 +519,7 @@ namespace TestStructures
                             operationsPerformed--;
                         }
                         break;
-                    case TreeOperations.Remove:
+                    case Operations.Remove:
                         try
                         {
                             Tree.Remove(generator.GenerateKey(operation));
@@ -530,7 +529,7 @@ namespace TestStructures
                             operationsPerformed++;
                         }
                         break;
-                    case TreeOperations.Get:
+                    case Operations.Get:
                         try
                         {
                             Tree.Find(generator.GenerateKey(operation));
@@ -588,22 +587,22 @@ namespace TestStructures
         [InlineData(-1, 0)]
         [InlineData(0, 0)]
         [InlineData(0, 1)]
-        [InlineData(0,10)]
-        [InlineData(0,100)]
-        [InlineData(0,1000)]
-        [InlineData(0,10000)]
-        [InlineData(0,100000)]
-        [InlineData(0,1000000)]
-        [InlineData(0,10000000)]
-        [InlineData(-3,10000000)]
+        [InlineData(0, 10)]
+        [InlineData(0, 100)]
+        [InlineData(0, 1000)]
+        [InlineData(0, 10000)]
+        [InlineData(0, 100000)]
+        [InlineData(0, 1000000)]
+        [InlineData(0, 10000000)]
+        [InlineData(-3, 10000000)]
         public void InsertRangeGenerated(int start, int end)
         {
             //Arrange
             List<BinaryTreeNode<long, long>>? actualList;
-            List<(long, long)> data = new List<(long, long)>(end-start);
+            List<(long, long)> data = new List<(long, long)>(end - start);
             for (int index = start; index < end; index++)
             {
-                data.Add(new (index,index));
+                data.Add(new(index, index));
             }
 
             //Act
@@ -679,12 +678,12 @@ namespace TestStructures
         }
 
         [Theory]
-        [InlineData(10,0)]
-        [InlineData(100,0)]
-        [InlineData(1000,0)]
-        [InlineData(10000,0)]
-        [InlineData(100000,0)]
-        [InlineData(1000000,0)]
+        [InlineData(10, 0)]
+        [InlineData(100, 0)]
+        [InlineData(1000, 0)]
+        [InlineData(10000, 0)]
+        [InlineData(100000, 0)]
+        [InlineData(1000000, 0)]
         public void BalanceTreeGeneratedInput(int countOfNodes, int? seed)
         {
             //Arrange

@@ -1,6 +1,6 @@
 ﻿using Structures.Tree;
 
-namespace TestStructures
+namespace TestStructures.BinarySearchTree
 {
     public class BinaryTreeNodeTest
     {

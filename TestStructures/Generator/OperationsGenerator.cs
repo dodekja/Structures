@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TestStructures.Generator.Helpers;
+﻿using TestStructures.Generator.Helpers;
 
 namespace TestStructures.Generator
 {
-    internal class TreeOperationsGenerator
+    internal class OperationsGenerator
     {
         public Counter Add { get; set; }
         public Counter Remove { get; set; }
@@ -15,7 +10,7 @@ namespace TestStructures.Generator
         public List<int> KeysForOperations { get; set; }
         public Random Generator { get; set; }
 
-        public TreeOperationsGenerator(int insert, int get, int remove, int? seed = null)
+        public OperationsGenerator(int insert, int get, int remove, int? seed = null)
         {
             Add = new Counter(insert);
             Remove = new Counter(get);
@@ -24,10 +19,10 @@ namespace TestStructures.Generator
             Generator = seed == null ? new Random(seed!.Value) : new Random();
         }
 
-        public TreeOperations GenerateOperation()
+        public Operations GenerateOperation()
         {
             int randomNumber;
-            TreeOperations? operation = null;
+            Operations? operation = null;
             if (!Add.IsCountReached() && !Remove.IsCountReached() && !Get.IsCountReached())
             {
                 randomNumber = Generator.Next(0, 3);
@@ -37,7 +32,7 @@ namespace TestStructures.Generator
                 }
                 else
                 {
-                    operation = TreeOperations.Get;
+                    operation = Operations.Get;
 
                 }
             }
@@ -52,11 +47,11 @@ namespace TestStructures.Generator
                 randomNumber = Generator.Next(0, 2);
                 if (randomNumber == 0)
                 {
-                    operation = TreeOperations.Add;
+                    operation = Operations.Add;
                 }
                 else
                 {
-                    operation = TreeOperations.Get;
+                    operation = Operations.Get;
                 }
             }
 
@@ -65,28 +60,28 @@ namespace TestStructures.Generator
                 randomNumber = Generator.Next(0, 2);
                 if (randomNumber == 0)
                 {
-                    operation = TreeOperations.Remove;
+                    operation = Operations.Remove;
                 }
                 else
                 {
-                    operation = TreeOperations.Get;
+                    operation = Operations.Get;
 
                 }
             }
 
             else if (!Add.IsCountReached() && Remove.IsCountReached() && Get.IsCountReached())
             {
-                operation = TreeOperations.Add;
+                operation = Operations.Add;
             }
 
             else if (Add.IsCountReached() && !Remove.IsCountReached() && Get.IsCountReached())
             {
-                operation = TreeOperations.Remove;
+                operation = Operations.Remove;
             }
 
             else if (Add.IsCountReached() && Remove.IsCountReached() && !Get.IsCountReached())
             {
-                operation = TreeOperations.Get;
+                operation = Operations.Get;
             }
 
             else if (operation == null)
@@ -96,33 +91,33 @@ namespace TestStructures.Generator
 
             switch (operation)
             {
-                case TreeOperations.Add:
+                case Operations.Add:
                     Add.Increment();
                     break;
-                case TreeOperations.Remove:
+                case Operations.Remove:
                     Remove.Increment();
                     break;
-                case TreeOperations.Get:
+                case Operations.Get:
                     Get.Increment();
                     break;
             }
 
-            return (TreeOperations)operation;
+            return (Operations)operation;
         }
 
-        public int GenerateKey(TreeOperations operation)
+        public int GenerateKey(Operations operation)
         {
             int key;
             switch (operation)
             {
-                case TreeOperations.Add:
+                case Operations.Add:
                     key = Generator.Next();
                     KeysForOperations.Add(key);
                     return key;
-                    case TreeOperations.Get:
+                    case Operations.Get:
                     key = KeysForOperations[Generator.Next(0, KeysForOperations.Count)];
                     return key;
-                    case TreeOperations.Remove:
+                    case Operations.Remove:
                     key = KeysForOperations[Generator.Next(0, KeysForOperations.Count)];
                     KeysForOperations.Remove(key);
                     return key;
@@ -132,44 +127,44 @@ namespace TestStructures.Generator
             return -1;
         }
 
-        private TreeOperations AddOrRemove()
+        private Operations AddOrRemove()
         {
             if (Add.CurrentCount == Remove.CurrentCount)
             {
-                return TreeOperations.Add;
+                return Operations.Add;
             }
             else if (!Add.IsCountReached() && !Remove.IsCountReached())
             {
                 int rand = Generator.Next(0, 2);
                 if (rand == 0)
                 {
-                    return TreeOperations.Add;
+                    return Operations.Add;
                 }
 
-                return TreeOperations.Remove;
+                return Operations.Remove;
             }
             else if (Add.IsCountReached() && !Remove.IsCountReached())
             {
-                return TreeOperations.Remove;
+                return Operations.Remove;
             }
             else if (!Add.IsCountReached() && Remove.IsCountReached())
             {
-                return TreeOperations.Add;
+                return Operations.Add;
             }
 
             throw new InvalidOperationException("Unable to choose operation");
         }
 
-        public void AddOperation(int index, TreeOperations operation, List<int> actualKeys)
+        public void AddOperation(int index, Operations operation, List<int> actualKeys)
         {
             int key;
-            if (operation == TreeOperations.Add)
+            if (operation == Operations.Add)
             {
                 key = Generator.Next();
                 KeysForOperations.Add(key);
                 actualKeys.Add(key);
             }
-            else if (operation == TreeOperations.Get)
+            else if (operation == Operations.Get)
             {
                 key = Generator.Next(0, actualKeys.Count);
                 KeysForOperations.Add(actualKeys[key]);
@@ -185,17 +180,17 @@ namespace TestStructures.Generator
             switch (operation)
             {
 
-                case TreeOperations.Add:
+                case Operations.Add:
                     {
                         Add.Increment();
                         break;
                     }
-                case TreeOperations.Remove:
+                case Operations.Remove:
                     {
                         Remove.Increment();
                         break;
                     }
-                case TreeOperations.Get:
+                case Operations.Get:
                     {
                         Get.Increment();
                         break;
