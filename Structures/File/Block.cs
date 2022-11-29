@@ -35,7 +35,7 @@ namespace Structures.File
 
         public void AddRecord(T record)
         {
-            if (ValidCount == _blockFactor)
+            if (ValidCount >= _blockFactor)
             {
                 throw new IndexOutOfRangeException("Block capacity reached.");
             }
@@ -128,6 +128,32 @@ namespace Structures.File
                 builder.Append($"{_records[index]}\n");
             }
             return builder.ToString();
+        }
+
+        public List<T> GetValidItems()
+        {
+            List<T> validItems = new List<T>();
+            for (int index = 0; index < ValidCount; index++)
+            {
+                validItems.Add(_records[index]);
+            }
+            return validItems;
+        }
+
+        public void ClearRecords()
+        {
+            _records = new List<T>(_blockFactor);
+            for (int i = 0; i < _blockFactor; i++)
+            {
+                var data = Activator.CreateInstance<T>();
+                _records.Add(data);
+            }
+            ValidCount = 0;
+        }
+
+        public T GetFirstItem()
+        {
+            return _records[0];
         }
     }
 }

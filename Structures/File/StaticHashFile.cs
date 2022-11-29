@@ -2,19 +2,9 @@
 
 namespace Structures.File
 {
-    public class HashFile<T> : IDisposable where T : IData<T>, new()
+    public class StaticHashFile<T> : AbstractHashFile<T> where T : IData<T>, new()
     {
-        private int _blockFactor;
-
-        private int _blockSize;
-
-        private int _numberOfBlocks;
-
-        private FileStream _file;
-
-        private int[] _blockAddresses;
-
-        public HashFile(string fileName, int blockFactor, int numberOfBlocks)
+        public StaticHashFile(string fileName, int blockFactor, int numberOfBlocks)
         {
             _blockFactor = blockFactor;
             _numberOfBlocks = numberOfBlocks;
@@ -34,10 +24,10 @@ namespace Structures.File
         }
 
         /// <summary>
-        /// Initializes the HashFile based on information from the binary file.
+        /// Initializes the StaticHashFile based on information from the binary file.
         /// </summary>
         /// <param name="fileName">Path to the file with data</param>
-        public HashFile(string fileName)
+        public StaticHashFile(string fileName)
         {
             _file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             int address = ReadProperties();
@@ -51,7 +41,7 @@ namespace Structures.File
             }
         }
 
-        public void Insert(T data)
+        public override void Insert(T data)
         {
             int address = _blockAddresses[data.GetHash() % _numberOfBlocks];
             Block<T> block = ReadBlock(address);
@@ -59,7 +49,7 @@ namespace Structures.File
             SaveBlock(block, address);
         }
 
-        public void Delete(T data)
+        public override void Delete(T data)
         {
             int address = _blockAddresses[data.GetHash() % _numberOfBlocks];
             Block<T> block = ReadBlock(address);
@@ -67,7 +57,7 @@ namespace Structures.File
             SaveBlock(block, address);
         }
 
-        public T? Find(T data)
+        public override T? Find(T data)
         {
             int address = _blockAddresses[data.GetHash() % _numberOfBlocks];
             Block<T> block = ReadBlock(address);
@@ -89,24 +79,7 @@ namespace Structures.File
             return block.GetContentsString();
         }
 
-        private void SaveBlock(Block<T> block, int blockAddress)
-        {
-            _file.Seek(blockAddress, SeekOrigin.Begin);
-            byte[] blockBytes = block.ToByteArray();
-            _file.Write(blockBytes, 0,blockBytes.Length);
-        }
-
-        private Block<T> ReadBlock(int blockAddress)
-        {
-            _file.Seek(blockAddress, SeekOrigin.Begin);
-            byte[] blockBytes = new byte[_blockSize];
-            _ = _file.Read(blockBytes, 0, _blockSize);
-            Block<T> block = new Block<T>(_blockFactor);
-            block.FromByteArray(blockBytes);
-            return block;
-        }
-
-        private int SaveProperties()
+        protected override int SaveProperties()
         {
             int address = 0;
             _file.Seek(address, SeekOrigin.Begin);
@@ -125,7 +98,7 @@ namespace Structures.File
         /// Reads block factor and number of blocks from binary file.
         /// </summary>
         /// <returns>Current position in the file after reading property bytes.</returns>
-        private int ReadProperties()
+        protected override int ReadProperties()
         {
             int address = 0;
             _file.Seek(address, SeekOrigin.Begin);
@@ -142,7 +115,7 @@ namespace Structures.File
             return address;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _file.Dispose();
         }

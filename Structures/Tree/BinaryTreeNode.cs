@@ -8,12 +8,12 @@
         /// <summary>
         /// Height of left subtree.
         /// </summary>
-        protected internal int LeftSubtreeHeight { get; set; }
+        protected internal int LeftSubtreeSize { get; set; }
 
         /// <summary>
         /// Height of right subtree.
         /// </summary>
-        protected internal int RightSubtreeHeight { get; set; }
+        protected internal int RightSubtreeSize { get; set; }
         
         public BinaryTreeNode(TKey key, TData data)
         {
@@ -21,8 +21,8 @@
             Data = data;
             Parent = null;
             Children = new BinaryTreeNode<TKey, TData?>?[2];
-            LeftSubtreeHeight = 0;
-            RightSubtreeHeight = 0;
+            LeftSubtreeSize = 0;
+            RightSubtreeSize = 0;
         }
 
         protected internal override AbstractTreeNode<TKey, TData?>? GetSon(int index)
@@ -49,16 +49,16 @@
         {
             if (Children[0] != null)
             {
-                LeftSubtreeHeight = 0;
+                LeftSubtreeSize = 0;
             }
             if (leftSon != null)
             {
                 leftSon.Parent = this;
-                LeftSubtreeHeight = leftSon.LeftSubtreeHeight + leftSon.RightSubtreeHeight + 1;
+                LeftSubtreeSize = leftSon.LeftSubtreeSize + leftSon.RightSubtreeSize + 1;
             }
             else
             {
-                LeftSubtreeHeight = 0;
+                LeftSubtreeSize = 0;
             }
             Children[0] = leftSon;
 
@@ -68,16 +68,16 @@
         {
             if (Children[1] != null)
             {
-                RightSubtreeHeight = 0;
+                RightSubtreeSize = 0;
             }
             if (rightSon != null)
             {
                 rightSon.Parent = this;
-                RightSubtreeHeight = rightSon.LeftSubtreeHeight + rightSon.RightSubtreeHeight + 1;
+                RightSubtreeSize = rightSon.LeftSubtreeSize + rightSon.RightSubtreeSize + 1;
             }
             else
             {
-                RightSubtreeHeight = 0;
+                RightSubtreeSize = 0;
             }
             Children[1] = rightSon;
 
@@ -116,17 +116,17 @@
         /// <returns>Negative value if left subtree is bigger, 0 if subtrees are equal and positive value if right subtree is bigger.</returns>
         public int GetSubtreeDifference()
         {
-            return  RightSubtreeHeight - LeftSubtreeHeight;
+            return  RightSubtreeSize - LeftSubtreeSize;
         }
 
         public void IncrementLeftSubtree()
         {
-            LeftSubtreeHeight++;
+            LeftSubtreeSize++;
         }
 
         public void IncrementRightSubtree()
         {
-            RightSubtreeHeight++;
+            RightSubtreeSize++;
         }
     }
 }

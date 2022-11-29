@@ -20,12 +20,12 @@ namespace TestStructures.HashFile
         {
             //Arrange
             string filename = "test.dat";
-            using HashFile<IntData> hashFile = new HashFile<IntData>(filename, blockFactor, numberOfBlocks);
+            using StaticHashFile<IntData> staticHashFile = new StaticHashFile<IntData>(filename, blockFactor, numberOfBlocks);
             IntData data = new IntData(Random.Shared.Next());
 
             //Act
-            hashFile.Insert(data);
-            var actual = hashFile.Find(data);
+            staticHashFile.Insert(data);
+            var actual = staticHashFile.Find(data);
 
             //Assert
             Assert.True(actual?.IsEqual(data), "Data not found");
@@ -45,13 +45,13 @@ namespace TestStructures.HashFile
         {
             //Arrange
             string filename = "test.dat";
-            using HashFile<IntData> hashFile = new HashFile<IntData>(filename, blockFactor, numberOfBlocks);
+            using StaticHashFile<IntData> staticHashFile = new StaticHashFile<IntData>(filename, blockFactor, numberOfBlocks);
             IntData data = new IntData(Random.Shared.Next());
-            hashFile.Insert(data);
+            staticHashFile.Insert(data);
 
             //Act
-            hashFile.Delete(data);
-            var actual = hashFile.Find(data);
+            staticHashFile.Delete(data);
+            var actual = staticHashFile.Find(data);
 
             //Assert
             Assert.True(actual == null, "Data not removed found");
@@ -71,12 +71,12 @@ namespace TestStructures.HashFile
         {
             //Arrange
             string filename = "test.dat";
-            using HashFile<IntData> hashFile = new HashFile<IntData>(filename, blockFactor, numberOfBlocks);
+            using StaticHashFile<IntData> staticHashFile = new StaticHashFile<IntData>(filename, blockFactor, numberOfBlocks);
             IntData data = new IntData(Random.Shared.Next());
-            hashFile.Insert(data);
+            staticHashFile.Insert(data);
 
             //Act
-            var actual = hashFile.Find(data);
+            var actual = staticHashFile.Find(data);
 
             //Assert
             Assert.True(actual?.IsEqual(data), "Expected and actual items are not equal");
@@ -87,13 +87,13 @@ namespace TestStructures.HashFile
         [InlineData(100, 100, 1000, 500, 500)]
         [InlineData(100, 100, 1000, 50, 50000)]
         [InlineData(100, 100, 1000, 900, 500)]
-        [InlineData(1000, 10000, 1000000, 50000, 50000)]
-        [InlineData(1000, 10000, 1000000, 500000, 50)]
-        [InlineData(1000, 10000, 1000000, 500, 500000)]
+        //[InlineData(1000, 10000, 1000000, 50000, 50000)]
+        //[InlineData(1000, 10000, 1000000, 500000, 50)]
+        //[InlineData(1000, 10000, 1000000, 500, 500000)]
         public void IntegrationTests(int blockFactor, int numberOfBlocks, int addCount, int removeCount, int getCount, int seed = 0)
         {
             //Arrange
-            using HashFile<IntData> hashFile = new HashFile<IntData>("test.dat", blockFactor, numberOfBlocks);
+            using StaticHashFile<IntData> staticHashFile = new StaticHashFile<IntData>("test.dat", blockFactor, numberOfBlocks);
             var generator = new OperationsGenerator(addCount, removeCount, getCount, seed);
 
             //Act
@@ -106,7 +106,7 @@ namespace TestStructures.HashFile
                         IntData data = new IntData(generator.GenerateKey(operation));
                         try
                         {
-                            hashFile.Insert(data);
+                            staticHashFile.Insert(data);
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -116,7 +116,7 @@ namespace TestStructures.HashFile
                     case Operations.Remove:
                         try
                         {
-                            hashFile.Delete(new IntData(generator.GenerateKey(operation)));
+                            staticHashFile.Delete(new IntData(generator.GenerateKey(operation)));
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -124,7 +124,7 @@ namespace TestStructures.HashFile
                         }
                         break;
                     case Operations.Get:
-                        hashFile.Find(new IntData(generator.GenerateKey(operation)));
+                        staticHashFile.Find(new IntData(generator.GenerateKey(operation)));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -133,7 +133,7 @@ namespace TestStructures.HashFile
 
             foreach (int operationKey in generator.KeysForOperations)
             {
-                if (hashFile.Find(new IntData(operationKey)) == null)
+                if (staticHashFile.Find(new IntData(operationKey)) == null)
                 {
                     Assert.Fail("Key not found");
                 }
@@ -150,7 +150,7 @@ namespace TestStructures.HashFile
         public void IntegrationTestsErrors(int blockFactor, int numberOfBlocks, int addCount, int removeCount, int getCount, int seed = 0)
         {
             //Arrange
-            using HashFile<IntData> hashFile = new HashFile<IntData>("test.dat", blockFactor, numberOfBlocks);
+            using StaticHashFile<IntData> staticHashFile = new StaticHashFile<IntData>("test.dat", blockFactor, numberOfBlocks);
             var generator = new OperationsGenerator(addCount, removeCount, getCount, seed);
             bool insertError = false;
             bool removeError = false;
@@ -166,7 +166,7 @@ namespace TestStructures.HashFile
                         IntData data = new IntData(generator.GenerateKey(operation));
                         try
                         {
-                            hashFile.Insert(data);
+                            staticHashFile.Insert(data);
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -177,7 +177,7 @@ namespace TestStructures.HashFile
                     case Operations.Remove:
                         try
                         {
-                            hashFile.Delete(new IntData(generator.GenerateKey(operation)));
+                            staticHashFile.Delete(new IntData(generator.GenerateKey(operation)));
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -186,7 +186,7 @@ namespace TestStructures.HashFile
                         }
                         break;
                     case Operations.Get:
-                        if (hashFile.Find(new IntData(generator.GenerateKey(operation))) == null)
+                        if (staticHashFile.Find(new IntData(generator.GenerateKey(operation))) == null)
                         {
                             Assert.True(true, "If a collision occurs, not finding data is possible");
                             findError = true;
