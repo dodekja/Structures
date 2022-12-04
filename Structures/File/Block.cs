@@ -8,7 +8,7 @@ namespace Structures.File
         /// <summary>
         /// Capacity of the block.
         /// </summary>
-        private readonly int _blockFactor;
+        public int BlockFactor { get; }
 
         /// <summary>
         /// Number of valid records.
@@ -22,9 +22,9 @@ namespace Structures.File
 
         public Block(int blockFactor)
         {
-            _blockFactor = blockFactor;
+            BlockFactor = blockFactor;
             _records = new List<T>(blockFactor);
-            for (int i = 0; i < _blockFactor; i++)
+            for (int i = 0; i < BlockFactor; i++)
             {
                 var data = Activator.CreateInstance<T>();
                 _records.Add(data);
@@ -35,7 +35,7 @@ namespace Structures.File
 
         public void AddRecord(T record)
         {
-            if (ValidCount >= _blockFactor)
+            if (ValidCount == BlockFactor)
             {
                 throw new IndexOutOfRangeException("Block capacity reached.");
             }
@@ -77,7 +77,7 @@ namespace Structures.File
             int offset = 0;
             Buffer.BlockCopy(validCountBytes,0,array, offset, validCountBytes.Length);
             offset = validCountBytes.Length;
-            for (int index = 0; index < _blockFactor; index++)
+            for (int index = 0; index < BlockFactor; index++)
             {
                 int recordSize =  _records[index].GetSize();
                 Buffer.BlockCopy(_records[index].ToByteArray(), 0, array, offset, recordSize);
@@ -94,7 +94,7 @@ namespace Structures.File
             ValidCount = BitConverter.ToInt32(data);
             srcOffset += sizeof(int);
 
-            for (int index = 0; index < _blockFactor; index++)
+            for (int index = 0; index < BlockFactor; index++)
             {
                 data = new byte[_records[index].GetSize()];
                 Buffer.BlockCopy(array,srcOffset,data,0,data.Length);
@@ -105,7 +105,7 @@ namespace Structures.File
 
         public int GetSize()
         {
-            return Activator.CreateInstance<T>().GetSize() * _blockFactor + sizeof(int);
+            return Activator.CreateInstance<T>().GetSize() * BlockFactor + sizeof(int);
         }
 
         public string GetContentsString()
@@ -142,8 +142,8 @@ namespace Structures.File
 
         public void ClearRecords()
         {
-            _records = new List<T>(_blockFactor);
-            for (int i = 0; i < _blockFactor; i++)
+            _records = new List<T>(BlockFactor);
+            for (int i = 0; i < BlockFactor; i++)
             {
                 var data = Activator.CreateInstance<T>();
                 _records.Add(data);

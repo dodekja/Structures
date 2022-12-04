@@ -1,6 +1,9 @@
 ﻿using Structures.Interface;
 using Structures.Tree;
 using System.Collections;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Net;
 
 namespace Structures.File
 {
@@ -8,34 +11,48 @@ namespace Structures.File
     {
         private Trie<T> _index;
 
-        private List<int> _blockAddresses;
-
         /// <summary>
         /// List of _blockAddresses indexes that point to empty blocks;
         /// </summary>
         private List<int> _emptyBlocks;
 
-        public DynamicHashFile(string fileName, int blockFactor)
+        private string _fileName;
+
+        public DynamicHashFile(string fileName, int blockFactor) : base(fileName, blockFactor)
         {
-            _blockFactor = blockFactor;
             _index = new Trie<T>(_blockFactor);
-            _blockAddresses = new List<int>();
             _emptyBlocks = new List<int>();
-            _numberOfBlocks = 1;
-            _file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             Block<T> block = new Block<T>(_blockFactor);
             _blockSize = block.GetSize();
-            int address = SaveProperties();
-            _blockAddresses.Add(address);
-            _index.Root.BlockAddress = address;
-            _index.Root.NumberOfItems = 0;
-            SaveBlock(block, address);
+            SaveProperties();
+            SaveBlock(block, sizeof(int));
+            _numberOfBlocks = 1;
         }
 
         public override void Insert(T data)
         {
             int address = _index.Find(data);
-            Block<T> block = ReadBlock(address);
+            Block<T> block;
+            if (address == -1)
+            {
+                block = AddNewBlock();
+                if (_emptyBlocks.Count == 0)
+                {
+                    address = ComputeBlockAddress(_numberOfBlocks, sizeof(int));
+                }
+                else
+                {
+                    address = _emptyBlocks.Min();
+                    _emptyBlocks.Remove(address);
+                }
+
+                _numberOfBlocks++;
+                _index.AddBlock(data, address, 1);
+            }
+            else
+            {
+                block = ReadBlock(address);
+            }
             block.AddRecord(data);
             int? depthOfSons = _index.AddItem(data);
             if (depthOfSons != null)
@@ -46,19 +63,22 @@ namespace Structures.File
                 int newBlockAddress;
                 if (_emptyBlocks.Count == 0)
                 {
-                    newBlockAddress = _blockAddresses.Last() + _blockSize;
-                    _blockAddresses.Add(_blockAddresses.Last() + _blockSize);
+                    newBlockAddress = ComputeBlockAddress(_numberOfBlocks, sizeof(int));
                 }
                 else
                 {
                     newBlockAddress = _emptyBlocks.Min();
+                    _emptyBlocks.Remove(newBlockAddress);
                 }
+                _numberOfBlocks++;
+
                 while (!splitSuccessFully)
                 {
                     depth++;
                     splitSuccessFully = SplitBlock(block, newBlock, depth);
                     _index.Split(block.GetFirstItem(), newBlock.GetFirstItem(), block.ValidCount, address, newBlock.ValidCount, newBlockAddress);
                 }
+
 
                 SaveBlock(newBlock, newBlockAddress);
             }
@@ -125,18 +145,32 @@ namespace Structures.File
             {
                 int brotherAddress = addresses.Value.Item1 == address ? addresses.Value.Item2 : addresses.Value.Item1;
                 Block<T> brotherBlock = ReadBlock(brotherAddress);
-                var save = JoinBlocks(block, address, brotherBlock, brotherAddress);
-                SaveBlock(save.Item1, save.Item2);
-            }
-            else
-            {
+                var delete = JoinBlocks(block, address, brotherBlock, brotherAddress);
+                SaveBlock(brotherBlock, brotherAddress);
                 SaveBlock(block, address);
+
+                if (delete.Item2 == ComputeBlockAddress(_numberOfBlocks - 1, sizeof(int)))
+                {
+                    TrimEmptyBlocks();
+                }
+
+                return;
+            }
+            SaveBlock(block, address);
+        }
+
+        private void TrimEmptyBlocks()
+        {
+            while (ReadBlock(ComputeBlockAddress(_numberOfBlocks - 1, sizeof(int))).ValidCount == 0)
+            {
+                _file.SetLength(_file.Length - _blockSize);
+                _numberOfBlocks--;
             }
         }
 
         public (Block<T>, int) JoinBlocks(Block<T> firstBlock, int firstBlockAddress, Block<T> secondBlock, int secondBlockAddress)
         {
-            int keepAddress = firstBlockAddress < secondBlockAddress ? firstBlockAddress : secondBlockAddress;
+            int delAddress = firstBlockAddress < secondBlockAddress ? secondBlockAddress : firstBlockAddress;
             Block<T> delBlock = firstBlockAddress < secondBlockAddress ? secondBlock : firstBlock;
             Block<T> keepBlock = firstBlockAddress < secondBlockAddress ? firstBlock : secondBlock;
             var items = delBlock.GetValidItems();
@@ -144,7 +178,8 @@ namespace Structures.File
             {
                 keepBlock.AddRecord(item);
             }
-            return (keepBlock, keepAddress);
+            delBlock.ClearRecords();
+            return (delBlock, delAddress);
         }
 
         public override T? Find(T data)
@@ -156,28 +191,36 @@ namespace Structures.File
 
         }
 
-        protected override int ReadProperties()
+        protected override void ReadProperties()
         {
-            int address = 0;
-            _file.Seek(address, SeekOrigin.Begin);
-            byte[] bytes = new byte[sizeof(int)];
-            _ = _file.Read(bytes, 0, sizeof(int));
-            _blockFactor = BitConverter.ToInt32(bytes, 0);
-            return address;
+            base.ReadProperties();
+
+            //TODO: nepouzivat serializaciu
+            _index = JsonSerializer.Deserialize<Trie<T>>(System.IO.File.ReadAllText($"{_fileName}.txt"));
         }
 
-        protected override int SaveProperties()
+        protected override void SaveProperties()
         {
-            int address = 0;
-            _file.Seek(address, SeekOrigin.Begin);
-            byte[] bytes = BitConverter.GetBytes(_blockFactor);
-            _file.Write(bytes, 0, bytes.Length);
-            return address;
+            base.SaveProperties();
+            //TODO: nepouzivate serializaciu
+            JsonSerializerOptions options = new()
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                WriteIndented = true
+            };
+            string trieJson = JsonSerializer.Serialize<Trie<T>>(_index, options);
+            System.IO.File.WriteAllText($"{_fileName}.txt", trieJson);
         }
 
-        public override void Dispose()
+        public string GetAllBlockContents()
         {
-            _file.Dispose();
+            string contents = "";
+            for (int i = 0; i < _numberOfBlocks; i++)
+            {
+                contents += GetValidBlockContents(i, sizeof(int));
+                contents += "************************\n";
+            }
+            return contents;
         }
     }
 }

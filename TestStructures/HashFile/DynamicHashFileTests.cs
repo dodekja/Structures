@@ -62,7 +62,9 @@ namespace TestStructures.HashFile
                     counter++;
                 }
             }
-            
+
+            var something = dynamicHashFile.GetAllBlockContents();
+            File.Delete(filename);
             //Assert
             Assert.True(counter == numberOfItems, "Data not found");
         }
@@ -154,6 +156,12 @@ namespace TestStructures.HashFile
         [Theory]
         //should pass
         [InlineData(100, 1000, 500, 500)]
+        [InlineData(10, 1000, 500, 500)]
+        [InlineData(10, 100, 50, 50)]
+        [InlineData(10, 100, 90, 50)]
+        [InlineData(1000, 10000, 900, 50)]
+        [InlineData(100, 1000000, 90000, 50000)]
+        [InlineData(50, 1000000, 90000, 50000)]
         [InlineData(100, 1000, 50, 50000)]
         [InlineData(100, 1000, 900, 500)]
         //[InlineData(1000, 1000000, 50000, 50000)]
@@ -162,7 +170,7 @@ namespace TestStructures.HashFile
         public void IntegrationTests(int blockFactor, int addCount, int removeCount, int getCount, int seed = 0)
         {
             //Arrange
-            using DynamicHashFile<IntData> dynamicHashFile = new DynamicHashFile<IntData>("dynamicTest.dat", blockFactor);
+            using DynamicHashFile<IntData> dynamicHashFile = new DynamicHashFile<IntData>("dynamicTest", blockFactor);
             var generator = new OperationsGenerator(addCount, removeCount, getCount, seed);
 
             //Act
@@ -200,13 +208,17 @@ namespace TestStructures.HashFile
                 }
             }
 
+            //var something = dynamicHashFile.GetAllBlockContents();
+
             foreach (int operationKey in generator.KeysForOperations)
             {
                 if (dynamicHashFile.Find(new IntData(operationKey)) == null)
                 {
-                    Assert.Fail("Key not found");
+                    Assert.Fail($"Key {operationKey} not found");
                 }
             }
+
+            File.Delete("dynamicTest");
 
             //Assert
             Assert.True(true);

@@ -2,8 +2,22 @@
 
 namespace Structures.File
 {
-    public abstract class AbstractHashFile<T> : IDisposable where T : IData<T>, new()
+    public class AbstractHashFile<T> : IDisposable where T : IData<T>, new()
     {
+        public AbstractHashFile(string fileName, int blockFactor)
+        {
+            _blockFactor = blockFactor;
+            _file = new FileStream($"{fileName}.dat", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            _file.SetLength(0);
+        }
+
+        public AbstractHashFile(string fileName)
+        {
+            _file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            Block<T> block = new Block<T>(_blockFactor);
+            _blockSize = block.GetSize();
+        }
+
         /// <summary>
         /// Max number of items in a block.
         /// </summary>
@@ -18,16 +32,35 @@ namespace Structures.File
 
         protected FileStream _file;
 
-        protected IList<int> _blockAddresses;
+        public virtual void Insert(T data)
+        {
+            throw new NotSupportedException();
+        }
 
-        public abstract void Insert(T data);
+        public virtual void Delete(T data)
+        {
+            throw new NotSupportedException();
+        }
 
-        public abstract void Delete(T data);
+        public virtual T? Find(T data)
+        {
+            throw new NotSupportedException();
+        }
 
-        public abstract T? Find(T data);
+        protected virtual void ReadProperties()
+        {
+            _file.Seek(0, SeekOrigin.Begin);
+            byte[] bytes = new byte[sizeof(int)];
+            _ = _file.Read(bytes, 0, sizeof(int));
+            _blockFactor = BitConverter.ToInt32(bytes, 0);
+        }
 
-        protected abstract int ReadProperties();
-        protected abstract int SaveProperties();
+        protected virtual void SaveProperties()
+        {
+            _file.Seek(0, SeekOrigin.Begin);
+            byte[] bytes = BitConverter.GetBytes(_blockFactor);
+            _file.Write(bytes, 0, bytes.Length);
+        }
 
         protected void SaveBlock(Block<T> block, int blockAddress)
         {
@@ -45,6 +78,30 @@ namespace Structures.File
             block.FromByteArray(blockBytes);
             return block;
         }
-        public abstract void Dispose();
+
+        public string GetValidBlockContents(int addressIndex, int propertiesOffset)
+        {
+            int address = ComputeBlockAddress(addressIndex, propertiesOffset);
+            Block<T> block = ReadBlock(address);
+            string contents = $"Address: {address}\n" +
+                              $"Valid count: {block.ValidCount}\n" + 
+                              $"Block factor: {block.BlockFactor}\n";
+            return contents + block.GetValidContentsString();
+        }
+
+        public virtual int ComputeBlockAddress(T data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ComputeBlockAddress(int addressIndex, int propertiesOffset)
+        {
+            return propertiesOffset + addressIndex * _blockSize;
+        }
+
+        public virtual void Dispose()
+        {
+            _file.Dispose();
+        }
     }
 }
