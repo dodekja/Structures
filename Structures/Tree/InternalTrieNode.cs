@@ -4,7 +4,7 @@ namespace Structures.Tree
 {
     internal class InternalTrieNode<T>: TrieNode<T> where T : IData<T>
     {
-        private TrieNode<T>?[] Children { get; set; }
+        internal TrieNode<T>?[] Children { get; set; }
 
         public InternalTrieNode(int depth, InternalTrieNode<T>? parent) : base(depth,parent)
         {
@@ -27,6 +27,7 @@ namespace Structures.Tree
             {
                 leftSon.Depth = Depth + 1;
                 leftSon.Parent = this;
+                leftSon.Mask = Mask + "0";
             }
 
             Children[0] = leftSon;
@@ -38,6 +39,7 @@ namespace Structures.Tree
             {
                 rightSon.Depth = Depth + 1;
                 rightSon.Parent = this;
+                rightSon.Mask = Mask + "1";
             }
 
             Children[1] = rightSon;
@@ -56,6 +58,11 @@ namespace Structures.Tree
         public bool HasRightSon()
         {
             return Children[1] != null;
+        }
+
+        public override string ToString()
+        {
+            return $"{Mask}";
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Structures.Interface;
 using System.Collections;
+using System.Text;
 
 namespace Structures.Tree
 {
@@ -7,11 +8,11 @@ namespace Structures.Tree
     {
         public TrieNode<T> Root;
 
-        public int BlockFactor { get; private set; }
+        public int BlockFactor { get; }
 
         public Trie(int blockFactor)
         {
-            Root = new ExternalTrieNode<T>(0,sizeof(int),0,null);
+            Root = new ExternalTrieNode<T>(0, sizeof(int), 0, null);
             BlockFactor = blockFactor;
         }
 
@@ -20,7 +21,7 @@ namespace Structures.Tree
             var node = FindNode(data) as ExternalTrieNode<T>;
             if (node != Root)
             {
-                var parent = node.Parent as  InternalTrieNode<T>;
+                var parent = node.Parent as InternalTrieNode<T>;
                 var newInternalNode = new InternalTrieNode<T>(parent.Depth + 1, parent);
                 if (node.IsLeftSon())
                 {
@@ -57,7 +58,7 @@ namespace Structures.Tree
                 parent.SetRightSon(newInternalNode);
             }
 
-            newInternalNode.SetLeftSon(new ExternalTrieNode<T>(0,-1,newInternalNode.Depth+1,newInternalNode));
+            newInternalNode.SetLeftSon(new ExternalTrieNode<T>(0, -1, newInternalNode.Depth + 1, newInternalNode));
             newInternalNode.SetRightSon(new ExternalTrieNode<T>(0, -1, newInternalNode.Depth + 1, newInternalNode));
         }
 
@@ -121,21 +122,21 @@ namespace Structures.Tree
         {
             var actual = Root;
             var actualInternal = actual as InternalTrieNode<T>;
-            BitArray keyBits = new BitArray(BitConverter.GetBytes(data.GetHash()));
             while (actualInternal != null && actualInternal.GetLeftSon() != null && actualInternal.GetRightSon() != null)
             {
+                BitArray keyBits = new(BitConverter.GetBytes(data.GetHash()));
                 if (keyBits[actual.Depth] == false)
                 {
-                    actual = actualInternal.GetLeftSon() ;
+                    actual = actualInternal.GetLeftSon();
                 }
                 else
                 {
                     actual = actualInternal.GetRightSon();
                 }
 
-                if (actual is InternalTrieNode<T>)
+                if (actual is InternalTrieNode<T> node)
                 {
-                    actualInternal = (InternalTrieNode<T>)actual;
+                    actualInternal = node;
                 }
                 else
                 {
@@ -148,7 +149,7 @@ namespace Structures.Tree
         public (int, int)? Remove(T data)
         {
             var node = FindNode(data) as ExternalTrieNode<T>;
-            
+
             node.NumberOfItems--;
 
             if (node != Root)
@@ -167,14 +168,9 @@ namespace Structures.Tree
 
         public int Find(T data)
         {
-            if (Root != null)
+            if (FindNode(data) is ExternalTrieNode<T> node)
             {
-                ExternalTrieNode<T>? node = FindNode(data) as ExternalTrieNode<T>;
-
-                if (node != null)
-                {
-                    return node.BlockAddress;
-                }
+                return node.BlockAddress;
             }
 
             throw new ArgumentException($"Tree does not contain the node for {data}");
@@ -185,6 +181,109 @@ namespace Structures.Tree
             var node = FindNode(data) as ExternalTrieNode<T>;
             node.BlockAddress = address;
             node.NumberOfItems = numberOfItems;
+        }
+
+        public void Save(string filename)
+        {
+            StringBuilder builder = new();
+
+            Queue<TrieNode<T>> level = new();
+            if (Root is ExternalTrieNode<T> externalRoot)
+            {
+                builder.Append($"{externalRoot.ToString()}\n");
+            }
+            else
+            {
+                TrieNode<T> node = Root;
+                level.Enqueue(node as InternalTrieNode<T>);
+                while (level.Count > 0)
+                {
+                    node = level.Dequeue();
+                    if (node is InternalTrieNode<T> internalNode)
+                    {
+                        //builder.Append($"{internalNode.ToString()}\n");
+                        foreach (TrieNode<T> child in internalNode.Children)
+                        {
+                            if (child != null)
+                            {
+                                level.Enqueue(child);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        builder.Append($"{(node as ExternalTrieNode<T>)!.ToString()}\n");
+                    }
+                }
+            }
+
+            System.IO.File.WriteAllText($"{filename}.txt", builder.ToString());
+        }
+        /// <summary>
+        /// Loads the index Trie from a text file.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns>Number of blocks read</returns>
+        public int Load(string filename)
+        {
+            string[] lines = System.IO.File.ReadAllLines($"{filename}.txt");
+            string[] line;
+            if (lines.Length == 1)
+            {
+                line = lines[0].Split(null);
+                Root = new ExternalTrieNode<T>(int.Parse(line[1]), int.Parse(line[2]), int.Parse(line[3]), null);
+            }
+            else
+            {
+                Root = new InternalTrieNode<T>(0, null);
+                line = lines[0].Split(null);
+                string mask = line[0];
+                InternalTrieNode<T> actualNode = Root as InternalTrieNode<T>;
+
+                for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+                {
+                    line = lines[lineIndex].Split(null);
+                    mask = line[0];
+                    actualNode = Root as InternalTrieNode<T>;
+
+                    for (int characterIndex = 0; characterIndex < mask.Length; characterIndex++)
+                    {
+                        if (characterIndex != mask.Length - 1)
+                        {
+                            if (mask[characterIndex] == '0')
+                            {
+                                if (!actualNode.HasLeftSon())
+                                {
+                                    actualNode.SetLeftSon(new InternalTrieNode<T>(actualNode.Depth + 1, actualNode));
+                                }
+                                actualNode = actualNode.GetLeftSon() as InternalTrieNode<T>;
+                            }
+                            else
+                            {
+                                if (!actualNode.HasRightSon())
+                                {
+                                    actualNode.SetRightSon(new InternalTrieNode<T>(actualNode.Depth + 1, actualNode));
+                                }
+                                actualNode = actualNode.GetRightSon() as InternalTrieNode<T>;
+                            }
+                        }
+                        else
+                        {
+                            if (mask[characterIndex] == '0')
+                            {
+                                actualNode.SetLeftSon(new ExternalTrieNode<T>(int.Parse(line[1]), int.Parse(line[2]), int.Parse(line[3]), actualNode));
+                            }
+                            else
+                            {
+                                actualNode.SetRightSon(new ExternalTrieNode<T>(int.Parse(line[1]), int.Parse(line[2]), int.Parse(line[3]), actualNode));
+                            }
+                        }
+
+                    }
+                }
+
+            }
+            return lines.Length;
         }
     }
 }

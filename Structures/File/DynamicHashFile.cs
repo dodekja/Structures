@@ -3,7 +3,6 @@ using Structures.Tree;
 using System.Collections;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using System.Net;
 
 namespace Structures.File
 {
@@ -27,6 +26,18 @@ namespace Structures.File
             SaveProperties();
             SaveBlock(block, sizeof(int));
             _numberOfBlocks = 1;
+        }
+
+        public DynamicHashFile(string fileName, string indexFileName) : base(fileName)
+        {
+            _fileName = fileName;
+            ReadProperties();
+            _index = new Trie<T>(_blockFactor);
+            _numberOfBlocks = LoadIndex(indexFileName);
+            _emptyBlocks = new List<int>();
+            Block<T> block = new Block<T>(_blockFactor);
+            _blockSize = block.GetSize();
+            //TODO: sort out number of blocks and empty blocks
         }
 
         public override void Insert(T data)
@@ -194,22 +205,11 @@ namespace Structures.File
         protected override void ReadProperties()
         {
             base.ReadProperties();
-
-            //TODO: nepouzivat serializaciu
-            _index = JsonSerializer.Deserialize<Trie<T>>(System.IO.File.ReadAllText($"{_fileName}.txt"));
         }
 
         protected override void SaveProperties()
         {
             base.SaveProperties();
-            //TODO: nepouzivate serializaciu
-            JsonSerializerOptions options = new()
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                WriteIndented = true
-            };
-            string trieJson = JsonSerializer.Serialize<Trie<T>>(_index, options);
-            System.IO.File.WriteAllText($"{_fileName}.txt", trieJson);
         }
 
         public string GetAllBlockContents()
@@ -222,5 +222,17 @@ namespace Structures.File
             }
             return contents;
         }
+
+        public void SaveIndex(string filename)
+        {
+            _index.Save(filename);
+        }
+
+        public int LoadIndex(string filename)
+        {
+            return _index.Load(filename);
+        }
+        
+
     }
 }

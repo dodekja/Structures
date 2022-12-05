@@ -13,5 +13,10 @@ namespace Structures.Tree
             NumberOfItems = numberOfItems;
             BlockAddress = blockAddress;
         }
+
+        public override string ToString()
+        {
+            return $"{(Mask == "" ? "*" : Mask)} {NumberOfItems} {BlockAddress} {Depth}";
+        }
     }
 }

@@ -8,10 +8,13 @@ namespace Structures.Tree
 
         internal TrieNode<T>? Parent { get; set; }
 
+        internal string Mask { get; set; }
+
         public TrieNode(int depth, TrieNode<T>? parent)
         {
             Depth = depth;
             Parent = parent;
+            Mask = "";
         }
         
         public bool IsLeftSon()
@@ -22,6 +25,11 @@ namespace Structures.Tree
         public bool IsRightSon()
         {
             return Parent != null && (Parent as InternalTrieNode<T>)?.GetRightSon() == this;
+        }
+
+        public virtual string ToString()
+        {
+            return $"{Depth}";
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Structures.Interface;
+using System.Xml.Linq;
 
 namespace Structures.File
 {
@@ -9,11 +10,13 @@ namespace Structures.File
             _blockFactor = blockFactor;
             _file = new FileStream($"{fileName}.dat", FileMode.OpenOrCreate, FileAccess.ReadWrite);
             _file.SetLength(0);
+            Block<T> block = new Block<T>(_blockFactor);
+            _blockSize = block.GetSize();
         }
 
         public AbstractHashFile(string fileName)
         {
-            _file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            _file = new FileStream($"{fileName}.dat", FileMode.OpenOrCreate, FileAccess.ReadWrite);
             Block<T> block = new Block<T>(_blockFactor);
             _blockSize = block.GetSize();
         }
@@ -102,6 +105,7 @@ namespace Structures.File
         public virtual void Dispose()
         {
             _file.Dispose();
+            GC.WaitForPendingFinalizers();
         }
     }
 }

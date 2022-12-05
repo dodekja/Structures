@@ -1,7 +1,5 @@
 ﻿using Structures.File;
-using Structures.Interface;
 using TestStructures.Generator;
-using TestStructures.Generator.Helpers;
 using TestStructures.Wrappers;
 
 namespace TestStructures.HashFile
@@ -29,20 +27,20 @@ namespace TestStructures.HashFile
         }
 
         [Theory]
-        [InlineData(10,5)]
-        [InlineData(10,10)]
-        [InlineData(10,15)]
-        [InlineData(10,20)]
-        [InlineData(100,20)]
-        [InlineData(100,100)]
-        [InlineData(100,110)]
-        [InlineData(100,2000)]
-        [InlineData(1000,600)]
-        [InlineData(1000,1000)]
-        [InlineData(1000,1100)]
-        [InlineData(1000,2000)]
-        [InlineData(1000,10000)]
-       // [InlineData(1000,1000000)]
+        [InlineData(10, 5)]
+        [InlineData(10, 10)]
+        [InlineData(10, 15)]
+        [InlineData(10, 20)]
+        [InlineData(100, 20)]
+        [InlineData(100, 100)]
+        [InlineData(100, 110)]
+        [InlineData(100, 2000)]
+        [InlineData(1000, 600)]
+        [InlineData(1000, 1000)]
+        [InlineData(1000, 1100)]
+        [InlineData(1000, 2000)]
+        [InlineData(1000, 10000)]
+        // [InlineData(1000,1000000)]
         public void InsertMultipleItems(int blockFactor, int numberOfItems)
         {
             //Arrange
@@ -156,7 +154,7 @@ namespace TestStructures.HashFile
         [Theory]
         //should pass
         [InlineData(100, 1000, 500, 500)]
-        [InlineData(10, 1000, 500, 500)]
+        [InlineData(15, 1000, 500, 500)]
         [InlineData(10, 100, 50, 50)]
         [InlineData(10, 100, 90, 50)]
         [InlineData(1000, 10000, 900, 50)]
@@ -164,6 +162,7 @@ namespace TestStructures.HashFile
         [InlineData(50, 1000000, 90000, 50000)]
         [InlineData(100, 1000, 50, 50000)]
         [InlineData(100, 1000, 900, 500)]
+        [InlineData(100, 1000, 486, 500)]
         //[InlineData(1000, 1000000, 50000, 50000)]
         //[InlineData(1000, 1000000, 500000, 50)]
         //[InlineData(1000, 1000000, 500, 500000)]
@@ -218,10 +217,63 @@ namespace TestStructures.HashFile
                 }
             }
 
-            File.Delete("dynamicTest");
+            dynamicHashFile.SaveIndex("trie");
+            var something = File.ReadAllText("trie.txt");
 
             //Assert
             Assert.True(true);
+        }
+
+        [Theory]
+        [InlineData(10, 5)]
+        [InlineData(10, 10)]
+        [InlineData(10, 15)]
+        [InlineData(10, 20)]
+        [InlineData(100, 20)]
+        [InlineData(100, 100)]
+        [InlineData(100, 110)]
+        [InlineData(100, 2000)]
+        [InlineData(1000, 600)]
+        [InlineData(1000, 1000)]
+        [InlineData(1000, 1100)]
+        [InlineData(1000, 2000)]
+        [InlineData(1000, 10000)]
+        public void IndexSaveTest(int blockFactor, int numberOfItems)
+        {
+            //Arrange
+            string filename = "dynamicTest";
+            using (DynamicHashFile<IntData> dynamicHashFile = new DynamicHashFile<IntData>(filename, blockFactor))
+            {
+
+                int counter = 0;
+                for (int i = 0; i < numberOfItems; i++)
+                {
+                    IntData data = new IntData(i);
+                    dynamicHashFile.Insert(data);
+                    counter++;
+                }
+
+                //Act    
+                dynamicHashFile.SaveIndex("trie");
+                dynamicHashFile.Dispose();
+            };
+
+
+            using DynamicHashFile<IntData> anotherFile = new DynamicHashFile<IntData>(filename, "trie");
+
+            var expected = File.ReadAllText("trie.txt");
+            anotherFile.LoadIndex("trie");
+            anotherFile.SaveIndex("trie2");
+            var saved = File.ReadAllText("trie2.txt");
+
+            for (int i = 0; i < numberOfItems; i++)
+            {
+                IntData data = new IntData(i);
+                anotherFile.Delete(data);
+            }
+
+            //Assert
+            Assert.True(expected == saved, "Actual and expected files are different");
         }
     }
 }
