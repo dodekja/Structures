@@ -1,6 +1,7 @@
 ﻿using Structures.Interface;
 using Structures.Tree;
 using System.Collections;
+using System.Text;
 
 namespace Structures.File
 {
@@ -24,6 +25,7 @@ namespace Structures.File
             SaveProperties();
             SaveBlock(block, sizeof(int));
             _numberOfBlocks = 1;
+            _fileName = fileName;
         }
 
         public DynamicHashFile(string fileName, string indexFileName) : base(fileName)
@@ -35,7 +37,7 @@ namespace Structures.File
             _emptyBlocks = new List<int>();
             Block<T> block = new Block<T>(_blockFactor);
             _blockSize = block.GetSize();
-            //TODO: sort out number of blocks and empty blocks
+            _fileName = fileName;
         }
 
         public override void Insert(T data)
@@ -224,10 +226,22 @@ namespace Structures.File
         public void SaveIndex(string filename)
         {
             _index.Save(filename);
+            StringBuilder builder = new();
+            foreach (int emptyBlock in _emptyBlocks)
+            {
+                builder.Append($"{emptyBlock}\n");
+            }
+            System.IO.File.WriteAllText($"{filename}_empty.txt",builder.ToString());
         }
 
         public int LoadIndex(string filename)
         {
+            string[] emptyBlockAddresses = System.IO.File.ReadAllLines($"{filename}_empty.txt");
+            foreach (string emptyBlockAddress in emptyBlockAddresses)
+            {
+                _emptyBlocks.Add(int.Parse(emptyBlockAddress));
+            }
+
             return _index.Load(filename);
         }
         
