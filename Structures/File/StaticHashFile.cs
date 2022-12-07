@@ -39,12 +39,13 @@ namespace Structures.File
             SaveBlock(block, address);
         }
 
-        public override void Delete(T data)
+        public override T Delete(T data)
         {
             int address = ComputeBlockAddress(data);
             Block<T> block = ReadBlock(address);
-            block.RemoveRecord(data);
+            T ret = block.RemoveRecord(data);
             SaveBlock(block, address);
+            return ret;
         }
 
         public override T? Find(T data)

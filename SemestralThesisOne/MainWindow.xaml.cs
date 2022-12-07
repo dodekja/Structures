@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using SemestralThesisOne.UserInterface;
 using SemestralThesisOne.UserInterface.App;
 using SemestralThesisOne.UserInterface.Hospital;
 using SemestralThesisOne.UserInterface.Patient;
@@ -124,6 +125,18 @@ namespace SemestralThesisOne
             app.HospitalManager.Load(app.PatientManager);
             MessageBox.Show($"Load complete", "Success",
                 MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void InitializeFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitializeFile initializeFile = new InitializeFile(app.PatientManager);
+            initializeFile.ShowDialog();
+        }
+
+        private void FindPatientInFile_Click(object sender, RoutedEventArgs e)
+        {
+            FindPatientInFIle findInFile = new FindPatientInFIle(app.PatientManager);
+            findInFile.ShowDialog();
         }
     }
 }

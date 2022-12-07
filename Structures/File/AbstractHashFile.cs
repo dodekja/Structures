@@ -39,7 +39,7 @@ namespace Structures.File
             throw new NotSupportedException();
         }
 
-        public virtual void Delete(T data)
+        public virtual T Delete(T data)
         {
             throw new NotSupportedException();
         }

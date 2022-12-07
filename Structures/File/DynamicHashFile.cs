@@ -146,11 +146,11 @@ namespace Structures.File
             return ReadBlock(_emptyBlocks.Min());
         }
 
-        public override void Delete(T data)
+        public override T Delete(T data)
         {
             int address = _index.Find(data);
             Block<T> block = ReadBlock(address);
-            block.RemoveRecord(data);
+            T ret = block.RemoveRecord(data);
             (int, int)? addresses = _index.Remove(data);
             if (addresses != null)
             {
@@ -165,9 +165,10 @@ namespace Structures.File
                     TrimEmptyBlocks();
                 }
 
-                return;
+                return ret;
             }
             SaveBlock(block, address);
+            return ret;
         }
 
         private void TrimEmptyBlocks()
@@ -244,7 +245,5 @@ namespace Structures.File
 
             return _index.Load(filename);
         }
-        
-
     }
 }

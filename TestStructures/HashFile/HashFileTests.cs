@@ -84,12 +84,18 @@ namespace TestStructures.HashFile
 
         [Theory]
         //should pass
-        [InlineData(100, 100, 1000, 500, 500)]
-        [InlineData(100, 100, 1000, 50, 50000)]
-        [InlineData(100, 100, 1000, 900, 500)]
-        //[InlineData(1000, 10000, 1000000, 50000, 50000)]
-        //[InlineData(1000, 10000, 1000000, 500000, 50)]
-        //[InlineData(1000, 10000, 1000000, 500, 500000)]
+        [InlineData(100, 20, 1000, 500, 500)]
+        [InlineData(15, 200, 1000, 500, 500)]
+        [InlineData(10, 20,  100, 50, 50)]
+        [InlineData(10, 20, 100, 90, 50)]
+        [InlineData(1000, 50, 10000, 900, 50)]
+        [InlineData(100, 30000, 1000000, 90000, 50000)]
+        [InlineData(50, 300000 ,1000000, 90000, 50000)]
+        [InlineData(100, 50 ,1000, 50, 50000)]
+        [InlineData(100,40 , 1000, 900, 500)]
+        [InlineData(100, 50 ,1000, 486, 500)]
+        [InlineData(10000, 50 ,100000, 40860, 50000)]
+
         public void IntegrationTests(int blockFactor, int numberOfBlocks, int addCount, int removeCount, int getCount, int seed = 0)
         {
             //Arrange

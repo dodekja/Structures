@@ -163,9 +163,9 @@ namespace TestStructures.HashFile
         [InlineData(100, 1000, 50, 50000)]
         [InlineData(100, 1000, 900, 500)]
         [InlineData(100, 1000, 486, 500)]
-        //[InlineData(1000, 1000000, 50000, 50000)]
-        //[InlineData(1000, 1000000, 500000, 50)]
-        //[InlineData(1000, 1000000, 500, 500000)]
+        [InlineData(10000, 100000, 40860, 50000)]
+
+
         public void IntegrationTests(int blockFactor, int addCount, int removeCount, int getCount, int seed = 0)
         {
             //Arrange
