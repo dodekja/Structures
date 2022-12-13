@@ -72,10 +72,10 @@ namespace SemestralThesisOne.Core.Model
             CurrentHospitalization = null;
             HospitalizationsEnded = new BinarySearchTree<string, Hospitalization>();
             hospitalizationsForFile = new List<Hospitalization?>(MaxHospitalizations);
-            for (int i = 0; i < MaxHospitalizations; i++)
-            {
-                hospitalizationsForFile.Add(new Hospitalization());
-            }
+            //for (int i = 0; i < MaxHospitalizations; i++)
+            //{
+            //    hospitalizationsForFile.Add(new Hospitalization());
+            //}
         }
 
         public override string ToString()
