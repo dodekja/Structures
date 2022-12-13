@@ -164,6 +164,7 @@ namespace TestStructures.HashFile
         [InlineData(100, 1000, 900, 500)]
         [InlineData(100, 1000, 486, 500)]
         [InlineData(10000, 100000, 40860, 50000)]
+        [InlineData(5, 10, 0, 0)]
 
 
         public void IntegrationTests(int blockFactor, int addCount, int removeCount, int getCount, int seed = 0)
@@ -187,6 +188,10 @@ namespace TestStructures.HashFile
                         catch (IndexOutOfRangeException)
                         {
                             Assert.Fail("These test should not have collisions");
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            generator.KeysForOperations.Remove(data.Integer);
                         }
                         break;
                     case Operations.Remove:
@@ -217,7 +222,7 @@ namespace TestStructures.HashFile
                 }
             }
 
-            dynamicHashFile.SaveIndex("trie");
+            dynamicHashFile.SaveIndex();
             var something = File.ReadAllText("trie.txt");
 
             //Assert
@@ -254,17 +259,18 @@ namespace TestStructures.HashFile
                 }
 
                 //Act    
-                dynamicHashFile.SaveIndex("trie");
+                dynamicHashFile.SaveIndex();
                 dynamicHashFile.Dispose();
             };
 
+            var expected = File.ReadAllText("dynamicTest_index.txt");
 
-            using DynamicHashFile<IntData> anotherFile = new DynamicHashFile<IntData>(filename, "trie");
 
-            var expected = File.ReadAllText("trie.txt");
-            anotherFile.LoadIndex("trie");
-            anotherFile.SaveIndex("trie2");
-            var saved = File.ReadAllText("trie2.txt");
+            using DynamicHashFile<IntData> anotherFile = new DynamicHashFile<IntData>(filename, "dynamicTest");
+
+            anotherFile.LoadIndex("dynamicTest");
+            anotherFile.SaveIndex();
+            var saved = File.ReadAllText("dynamicTest_index.txt");
 
             for (int i = 0; i < numberOfItems; i++)
             {

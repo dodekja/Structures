@@ -9,12 +9,11 @@
             if (difference == 0)
             {
                 return str;
-
             }
 
             if (difference > 0)
             {
-                return str.PadRight(difference);
+                return str.PadRight(desiredLength);
             }
 
             return str.Substring(0, desiredLength);

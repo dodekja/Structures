@@ -46,10 +46,10 @@ namespace SemestralThesisOne.Core.Model
         {
             if (End == null)
             {
-                return $"Start: {Start.ToShortDateString()} {Start.ToShortTimeString()} Diag: {Diagnosis} ";
+                return $"ID: {Id} Start: {Start.ToShortDateString()} {Start.ToShortTimeString()} Diag: {Diagnosis}";
             }
 
-            return $"Start: {Start.ToShortDateString()} {Start.ToShortTimeString()} End: {End?.ToShortDateString()} {End?.ToShortTimeString()} Diag: {Diagnosis} ";
+            return $"ID: {Id} Start: {Start.ToShortDateString()} {Start.ToShortTimeString()} End: {End?.ToShortDateString()} {End?.ToShortTimeString()} Diag: {Diagnosis}";
         }
 
         public string ToCsvString()
@@ -89,11 +89,11 @@ namespace SemestralThesisOne.Core.Model
             srcOffset += sizeof(int);
 
             data = new byte[sizeof(long)];
-            Buffer.BlockCopy(array, srcOffset, data, 0, sizeof(int));
+            Buffer.BlockCopy(array, srcOffset, data, 0, sizeof(long));
             Start = new DateTime(BitConverter.ToInt64(data));
             srcOffset += sizeof(long);
 
-            Buffer.BlockCopy(array, srcOffset, data, 0, sizeof(int));
+            Buffer.BlockCopy(array, srcOffset, data, 0, sizeof(long));
             DateTime end = new DateTime(BitConverter.ToInt64(data));
             End = new DateTime(BitConverter.ToInt64(data)) == default ? null : end;
             srcOffset += sizeof(long);

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Structures.File;
+using Structures.Interface;
 using TestStructures.Wrappers;
 
 namespace TestStructures.HashFile
@@ -116,6 +117,70 @@ namespace TestStructures.HashFile
 
             //Assert
             Assert.True(actualData == data, $"Actual data {actualData} is different from expected data {data}");
+        }
+
+        [Fact]
+        public void UpdateSingleItem()
+        {
+            //Arrange
+            Block<IntData> block = new Block<IntData>(1);
+            IntData data = new IntData(3);
+            block.AddRecord(data);
+            IntData update = new IntData(4);
+
+            //Act
+            var updateInfo = block.GetRecordForUpdate(data).Value;
+            updateInfo.Item1 = update;
+            block.UpdateRecord(updateInfo.Item1, updateInfo.Item2);
+            IntData? actualData = block.FindRecord(data);
+            IntData? actualUpdatedData = block.FindRecord(update);
+
+
+            //Assert
+            Assert.True(actualData == null && actualUpdatedData == update, $"Actual data {actualData} is different from expected data {data}");
+        }
+
+        [Theory]
+        [InlineData(10,1,11)]
+        [InlineData(10,4,5)]
+        [InlineData(100,50,96)]
+        [InlineData(100,4,83)]
+        public void UpdateMultipleItems(int blockFactor, int min, int max)
+        {
+            //Arrange
+            Block<IntData> block = new Block<IntData>(blockFactor);
+            for (int item = min; item < max; item++)
+            {
+                IntData data = new IntData(item);
+                block.AddRecord(data);
+            }
+
+
+            //Act
+            for (int index = min; index < max; index++)
+            {
+                IntData update = new IntData(index * -1);
+                var updateInfo = block.GetRecordForUpdate(new IntData(index)).Value;
+                updateInfo.Item1 = update;
+                block.UpdateRecord(updateInfo.Item1, updateInfo.Item2);
+            }
+
+            for (int index = min; index < max; index++)
+            {
+                if (block.FindRecord(new IntData(index)) != null)
+                {
+                    //This test does not work if 0 is added to the block.
+                    Assert.Fail("Old items should not be found.");
+                }
+
+                if (block.FindRecord(new IntData(index * - 1)) == null)
+                {
+                    Assert.Fail("new items should be found.");
+                }
+            }
+
+            //Assert
+            Assert.True(block.ValidCount == max-min, $"Valid count should be {max - min}, actual was {block.ValidCount}.");
         }
 
         [Theory]

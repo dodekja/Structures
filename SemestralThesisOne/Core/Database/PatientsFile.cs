@@ -40,7 +40,9 @@ namespace SemestralThesisOne.Core.Database
         /// <summary>
         /// Creates new static hash file.
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">name of the binary file used</param>
+        /// <param name="blockFactor">Max number of items in a single block</param>
+        /// <param name="numberOfBlocks">Number of blocks in file</param>
         public PatientsFile(string fileName, int blockFactor, int numberOfBlocks)
         {
             _patients = new StaticHashFile<Patient>(fileName, blockFactor, numberOfBlocks);
@@ -51,14 +53,10 @@ namespace SemestralThesisOne.Core.Database
             Patient patient = new Patient(identificationNumber);
             if (_patients is StaticHashFile<Patient> file)
             {
-                patient = file.Find(patient);
-            }
-            else
-            {
-                patient = (_patients as DynamicHashFile<Patient>)!.Find(patient);
+                return file.Find(patient);
             }
 
-            return patient;
+            return (_patients as DynamicHashFile<Patient>)!.Find(patient);
         }
 
         public Patient Remove(string identificationNumber)
@@ -72,8 +70,18 @@ namespace SemestralThesisOne.Core.Database
             {
                 patient = (_patients as DynamicHashFile<Patient>)!.Delete(patient);
             }
-
             return patient;
+        }
+
+        private (Patient record, int index, int blockAddress) GetPatientForUpdate(string patientId)
+        {
+            Patient patient = new Patient(patientId);
+            if (_patients is StaticHashFile<Patient> file)
+            {
+                return file.GetRecordForUpdate(patient);
+            }
+
+            return (_patients as DynamicHashFile<Patient>)!.GetRecordForUpdate(patient);
         }
 
         public Hospitalization FindHospitalization(string patientId, int hospitalizationId)
@@ -84,36 +92,57 @@ namespace SemestralThesisOne.Core.Database
 
         public void AddCurrentHospitalization(string patientId, DateTime start, string diagnosis)
         {
-            Patient patient = Remove(patientId);
-            patient.AddCurrentHospitalization(start, diagnosis);
-            _patients.Insert(patient);
+            var patientUpdateInfo = GetPatientForUpdate(patientId); 
+
+            patientUpdateInfo.record.AddCurrentHospitalization(start, diagnosis);
+
+            _patients.UpdateRecord(patientUpdateInfo.record,patientUpdateInfo.index,patientUpdateInfo.blockAddress);
         }
 
         public void EndCurrentHospitalization(string patientId, DateTime end)
         {
-            Patient patient = Remove(patientId);
-            if (patient.IsHospitalized())
+            var patientUpdateInfo = GetPatientForUpdate(patientId);
+            
+            if (patientUpdateInfo.record.IsHospitalized())
             {
-               patient.EndHospitalization(end);
+               patientUpdateInfo.record.EndHospitalization(end);
             }
-            _patients.Insert(patient);
+
+            _patients.UpdateRecord(patientUpdateInfo.record, patientUpdateInfo.index, patientUpdateInfo.blockAddress);
         }
 
         public void AddPatient(Patient patient)
         {
-            _patients.Insert(patient);
+            if (_patients is DynamicHashFile<Patient> file)
+            {
+                file.Insert(patient);
+            }
+            else
+            {
+                (_patients as StaticHashFile<Patient>).Insert(patient);
+            }
         }
 
         public void RemoveHospitalization(string patientId, int hospitalizationId)
         {
-            Patient patient = Remove(patientId);
-            patient.RemoveHospitalization(hospitalizationId);
-            _patients.Insert(patient);
+            var patientUpdateInfo = GetPatientForUpdate(patientId);
+
+            patientUpdateInfo.record.RemoveHospitalization(hospitalizationId);
+
+            _patients.UpdateRecord(patientUpdateInfo.record, patientUpdateInfo.index, patientUpdateInfo.blockAddress);
         }
 
-        public void RemovePatient(Patient patient)
+        public void SaveFile()
         {
-            _patients.Delete(patient);
+            if (_patients is DynamicHashFile<Patient> file)
+            {
+               file.SaveIndex();
+            }
+        }
+
+        public string GetAllBlockContents()
+        {
+            return _patients.GetAllBlockContents();
         }
     }
 }

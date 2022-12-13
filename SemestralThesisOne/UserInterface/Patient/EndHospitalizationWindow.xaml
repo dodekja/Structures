@@ -54,6 +54,11 @@
         <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
             <Button Name="AddEndButton" Click="AddEndButton_OnClickButton_OnClick" IsDefault="True">End Hospitalization</Button>
         </StackPanel>
+        
+        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Name="FindInFileButton" Click="FindInFileButton_OnClick" IsDefault="True">Find In File</Button>
+            <Button Name="AddEndToFileButton" Click="AddEndToFileButton_OnClickButton_OnClick" IsDefault="True">End File Hospitalization</Button>
+        </StackPanel>
 
         <ScrollViewer Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Height="285" CanContentScroll="True" Margin="5,0,0,0">
             <TextBlock TextWrapping="Wrap" Name="PatientsTextBlock"></TextBlock>

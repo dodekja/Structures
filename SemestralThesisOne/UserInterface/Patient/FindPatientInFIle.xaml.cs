@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using SemestralThesisOne.Core.ViewModel;
 
 namespace SemestralThesisOne.UserInterface.Patient
@@ -30,7 +19,16 @@ namespace SemestralThesisOne.UserInterface.Patient
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
-            PatientsTextBlock.Text = PatientManager.GetPatient(PatientIdTextBox.Text)?.ToString();
+            try
+            {
+                PatientsTextBlock.Text = PatientManager.GetPatientFromFile(PatientIdTextBox.Text)?.ToString();
+
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                throw;
+            }
         }
 
         private void FindHospitalization_OnClick(object sender, RoutedEventArgs e)
@@ -40,7 +38,21 @@ namespace SemestralThesisOne.UserInterface.Patient
 
         private void RemoveHospitalization_OnClick(object sender, RoutedEventArgs e)
         {
-            PatientManager.GetPatient(PatientIdTextBox.Text).RemoveHospitalization(int.Parse(HospitalIdTextBox.Text));
+            PatientManager.RemoveHospitalization(PatientIdTextBox.Text, int.Parse(HospitalIdTextBox.Text));
+            //PatientManager.GetPatient(PatientIdTextBox.Text).RemoveHospitalization(int.Parse(HospitalIdTextBox.Text));
+        }
+
+        private void RemovePatient_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(PatientIdTextBox.Text))
+            {
+                PatientManager.RemovePatient(PatientIdTextBox.Text);
+            }
+            else
+            {
+                MessageBox.Show("Please enter patient ID", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using Structures.Interface;
+﻿using Structures.Interface;
 
 namespace Structures.File
 {
@@ -29,6 +28,8 @@ namespace Structures.File
         public StaticHashFile(string fileName) : base(fileName)
         {
             ReadProperties();
+            Block<T> block = new Block<T>(_blockFactor);
+            _blockSize = block.GetSize();
         }
 
         public override void Insert(T data)
@@ -83,9 +84,51 @@ namespace Structures.File
             _numberOfBlocks = BitConverter.ToInt32(bytes, 0);
         }
 
-        public override int ComputeBlockAddress(T data)
+        protected override int ComputeBlockAddress(T data)
         {
             return 2 * sizeof(int) + data.GetHash() % _numberOfBlocks * _blockSize;
+        }
+
+        public override (T record, int index, int blockAddress) GetRecordForUpdate(T data)
+        {
+            int blockAddress = ComputeBlockAddress(data);
+            Block<T> block = ReadBlock(blockAddress);
+            var blockUpdateInfo = block.GetRecordForUpdate(data);
+            
+            if (blockUpdateInfo == null)
+            {
+                throw new InvalidOperationException($"Item {data} was not found.");
+            }
+
+            return (blockUpdateInfo.Value.record, blockUpdateInfo.Value.index, blockAddress);
+
+        }
+
+        public override void UpdateRecord(T data, int index, int blockAddress)
+        {
+            int address = ComputeBlockAddress(data);
+            if (blockAddress == address)
+            {
+                Block<T> block = ReadBlock(blockAddress);
+                block.UpdateRecord(data,index);
+                SaveBlock(block,address);
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Actual block address {address} for record {data} is different from the original address {blockAddress}.");
+            }
+        }
+
+        public override string GetAllBlockContents()
+        {
+            string contents = "";
+            for (int i = 0; i < _numberOfBlocks; i++)
+            {
+                contents += GetValidBlockContents(i, sizeof(int)*2);
+                contents += "************************\n";
+            }
+            return contents;
         }
     }
 }

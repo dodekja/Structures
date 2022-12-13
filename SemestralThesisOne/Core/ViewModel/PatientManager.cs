@@ -27,9 +27,14 @@ namespace SemestralThesisOne.Core.ViewModel
             return _patients.GetPatient(id);
         }
 
+        public Patient? GetPatientFromFile(string id)
+        {
+            return _patientsFile.FindPatient(id);
+        }
+
         public Hospitalization? GetHospitalization(string patientId, int hospitalizationId)
         {
-            return _patients.GetPatient(patientId)?.FindHospitalization(hospitalizationId);
+            return _patientsFile.FindPatient(patientId)?.FindHospitalization(hospitalizationId);
         }
 
         public void LoadStaticPatientsFile(string filename)
@@ -60,9 +65,46 @@ namespace SemestralThesisOne.Core.ViewModel
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        public void AddHospitalizationToFile(string patientId,DateTime start, string diagnosis)
+        {
+            _patientsFile.AddCurrentHospitalization(patientId,start,diagnosis);
+            MessageBox.Show($"Hospitalization added successfully", "Success",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public void EndCurrentHospitalizationInFile(string patientId, DateTime end)
+        {
+            _patientsFile.EndCurrentHospitalization(patientId, end);
+            MessageBox.Show("Hospitalization added successfully", "Success",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+
         public void Balance()
         {
             _patients.Balance();
+        }
+
+        public void RemovePatient(string identificationNumber)
+        {
+            _patientsFile.Remove(identificationNumber);
+            MessageBox.Show("Patient removed successfully", "Success",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public void SaveFile()
+        {
+            _patientsFile.SaveFile();
+        }
+
+        public void RemoveHospitalization(string patientID, int hospitalizationId)
+        {
+            _patientsFile.RemoveHospitalization(patientID,hospitalizationId);
+        }
+
+        public string GetAllBlockContentsFromFile()
+        {
+            return _patientsFile.GetAllBlockContents();
         }
     }
 }

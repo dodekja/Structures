@@ -213,7 +213,7 @@ namespace Structures.File
             base.SaveProperties();
         }
 
-        public string GetAllBlockContents()
+        public override string GetAllBlockContents()
         {
             string contents = "";
             for (int i = 0; i < _numberOfBlocks; i++)
@@ -224,15 +224,15 @@ namespace Structures.File
             return contents;
         }
 
-        public void SaveIndex(string filename)
+        public void SaveIndex()
         {
-            _index.Save(filename);
+            _index.Save($"{_fileName}_index");
             StringBuilder builder = new();
             foreach (int emptyBlock in _emptyBlocks)
             {
                 builder.Append($"{emptyBlock}\n");
             }
-            System.IO.File.WriteAllText($"{filename}_empty.txt",builder.ToString());
+            System.IO.File.WriteAllText($"{_fileName}_empty.txt",builder.ToString());
         }
 
         public int LoadIndex(string filename)
@@ -243,7 +243,37 @@ namespace Structures.File
                 _emptyBlocks.Add(int.Parse(emptyBlockAddress));
             }
 
-            return _index.Load(filename);
+            return _index.Load($"{filename}_index");
+        }
+
+        public override (T record, int index, int blockAddress) GetRecordForUpdate(T data)
+        {
+            int address = _index.Find(data);
+            Block<T> block = ReadBlock(address);
+            var recordInfo = block.GetRecordForUpdate(data);
+
+            if (recordInfo != null)
+            {
+                return (recordInfo.Value.record, recordInfo.Value.index, address);
+            }
+
+            throw new InvalidOperationException($"Item {data} was not found.");
+        }
+
+        public override void UpdateRecord(T data, int index, int blockAddress)
+        {
+            int address = _index.Find(data);
+            if (address == blockAddress)
+            {
+                Block<T> block = ReadBlock(address);
+                block.UpdateRecord(data, index);
+                SaveBlock(block,address);
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Actual block address {address} for record {data} is different from the original address {blockAddress}.");
+            }
         }
     }
 }

@@ -118,6 +118,10 @@ namespace TestStructures.HashFile
                         {
                             Assert.Fail("These test should not have collisions");
                         }
+                        catch (InvalidOperationException)
+                        {
+                            generator.KeysForOperations.Remove(data.Integer);
+                        }
                         break;
                     case Operations.Remove:
                         try

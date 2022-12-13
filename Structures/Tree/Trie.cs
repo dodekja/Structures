@@ -166,6 +166,12 @@ namespace Structures.Tree
             return null;
         }
 
+        /// <summary>
+        /// Get address of the block in dynamic hash file.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>Address of the dynamic hash file block as an offset of bytes from the beginning of file.</returns>
+        /// <exception cref="ArgumentException">Thrown when there is no node for the given data.</exception>
         public int Find(T data)
         {
             if (FindNode(data) is ExternalTrieNode<T> node)

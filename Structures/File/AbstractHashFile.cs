@@ -49,6 +49,16 @@ namespace Structures.File
             throw new NotSupportedException();
         }
 
+        public virtual (T record, int index, int blockAddress) GetRecordForUpdate(T data)
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void UpdateRecord(T data, int index, int blockAddress)
+        {
+            throw new NotSupportedException();
+        }
+
         protected virtual void ReadProperties()
         {
             _file.Seek(0, SeekOrigin.Begin);
@@ -91,14 +101,19 @@ namespace Structures.File
             return contents + block.GetValidContentsString();
         }
 
-        public virtual int ComputeBlockAddress(T data)
+        protected virtual int ComputeBlockAddress(T data)
         {
             throw new NotImplementedException();
         }
 
-        public int ComputeBlockAddress(int addressIndex, int propertiesOffset)
+        protected int ComputeBlockAddress(int addressIndex, int propertiesOffset)
         {
             return propertiesOffset + addressIndex * _blockSize;
+        }
+
+        public virtual string GetAllBlockContents()
+        {
+            throw new NotSupportedException();
         }
 
         public virtual void Dispose()

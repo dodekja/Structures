@@ -48,6 +48,7 @@
         <Button Grid.Row="4" Grid.Column="2" Content="InitializeFile" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="80" Margin="5,5,5,5" Click="InitializeFileButton_Click"/>
 
         <Button Grid.Row="5" Grid.Column="0" Content="FindPatientInFile" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="auto" Margin="5,5,5,5" Click="FindPatientInFile_Click"/>
+        <Button Grid.Row="5" Grid.Column="1" Content="GetAllBlockContents" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="auto" Margin="5,5,5,5" Click="GetAllBlockContents_Click"/>
 
 
 <Button Grid.Row="6" Grid.Column="0" Content="Quit" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="80" Margin="5,5,5,5" Click="Button_Click"/>

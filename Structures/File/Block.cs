@@ -35,6 +35,12 @@ namespace Structures.File
 
         public void AddRecord(T record)
         {
+            for (var index = 0; index < ValidCount; index++)
+            {
+                if (!_records[index].IsEqual(record)) continue;
+                throw new InvalidOperationException($"Record equal to {record} already exists.");
+            }
+
             if (ValidCount == BlockFactor)
             {
                 throw new IndexOutOfRangeException("Block capacity reached.");
@@ -59,6 +65,29 @@ namespace Structures.File
             throw new IndexOutOfRangeException("Data not found in block.");
         }
 
+        public (T record,int index)? GetRecordForUpdate(T data)
+        {
+            for (var index = 0; index < ValidCount; index++)
+            {
+                if (!_records[index].IsEqual(data)) continue;
+                return (_records[index], index);
+            }
+
+            return null;
+        }
+
+        public void UpdateRecord(T data, int index)
+        {
+            if (index <= ValidCount - 1)
+            {
+                _records[index] = data;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("Index is invalid");
+            }
+        }
+
         public T? FindRecord(T data)
         {
             for (var index = 0; index < ValidCount; index++)
@@ -75,11 +104,11 @@ namespace Structures.File
             byte[] array = new byte[GetSize()];
             byte[] validCountBytes = BitConverter.GetBytes(ValidCount);
             int offset = 0;
-            Buffer.BlockCopy(validCountBytes,0,array, offset, validCountBytes.Length);
+            Buffer.BlockCopy(validCountBytes, 0, array, offset, validCountBytes.Length);
             offset = validCountBytes.Length;
             for (int index = 0; index < BlockFactor; index++)
             {
-                int recordSize =  _records[index].GetSize();
+                int recordSize = _records[index].GetSize();
                 Buffer.BlockCopy(_records[index].ToByteArray(), 0, array, offset, recordSize);
                 offset += recordSize;
             }
@@ -97,7 +126,7 @@ namespace Structures.File
             for (int index = 0; index < BlockFactor; index++)
             {
                 data = new byte[_records[index].GetSize()];
-                Buffer.BlockCopy(array,srcOffset,data,0,data.Length);
+                Buffer.BlockCopy(array, srcOffset, data, 0, data.Length);
                 _records[index].FromByteArray(data);
                 srcOffset += data.Length;
             }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Structures.Interface;
 using Structures.Tree;
@@ -41,10 +40,10 @@ namespace SemestralThesisOne.Core.Model
             CurrentHospitalization = null;
             HospitalizationsEnded = new BinarySearchTree<string, Hospitalization>();
             hospitalizationsForFile = new List<Hospitalization?>(MaxHospitalizations);
-            for (int i = 0; i < MaxHospitalizations; i++)
-            {
-                hospitalizationsForFile.Add(new Hospitalization());
-            }
+            //for (int i = 0; i < MaxHospitalizations; i++)
+            //{
+            //    hospitalizationsForFile.Add(new Hospitalization());
+            //}
         }
 
         public Patient(string identificationNumber)
@@ -57,10 +56,10 @@ namespace SemestralThesisOne.Core.Model
             CurrentHospitalization = null;
             HospitalizationsEnded = new BinarySearchTree<string, Hospitalization>();
             hospitalizationsForFile = new List<Hospitalization?>(MaxHospitalizations);
-            for (int i = 0; i < MaxHospitalizations; i++)
-            {
-                hospitalizationsForFile.Add(new Hospitalization());
-            }
+            //for (int i = 0; i < MaxHospitalizations; i++)
+            //{
+            //    hospitalizationsForFile.Add(new Hospitalization());
+            //}
         }
 
         public Patient(string firstName, string lastName, string identificationNumber, DateTime dateOfBirth, Enums.InsuranceCompanyCodes insuranceCompanyCode)
@@ -136,7 +135,7 @@ namespace SemestralThesisOne.Core.Model
             HospitalizationsEnded.Balance();
         }
 
-        public void SetCurrentHospitalization(Hospitalization hospitalization)
+        public void SetCurrentHospitalization(Hospitalization? hospitalization)
         {
             CurrentHospitalization = hospitalization;
             hospitalizationsForFile.Add(hospitalization);
@@ -146,6 +145,7 @@ namespace SemestralThesisOne.Core.Model
         {
             HospitalizationsEnded.Add(hospitalization.Start.ToShortDateString() + hospitalization.Start.ToShortTimeString() +
                                       hospitalization.End.Value.ToShortDateString() + hospitalization.End.Value.ToShortTimeString(), hospitalization);
+
             hospitalizationsForFile.Add(hospitalization);
         }
 
@@ -162,15 +162,15 @@ namespace SemestralThesisOne.Core.Model
 
             byte[] bytes = Encoding.UTF8.GetBytes(FirstName);
             Buffer.BlockCopy(bytes, 0, array, offset, bytes.Length);
-            offset += bytes.Length;
+            offset += FirstNameLength;
 
             bytes = Encoding.UTF8.GetBytes(LastName);
             Buffer.BlockCopy(bytes, 0, array, offset, bytes.Length);
-            offset += bytes.Length;
+            offset += LastNameLength;
 
             bytes = Encoding.UTF8.GetBytes(IdentificationNumber);
             Buffer.BlockCopy(bytes, 0, array, offset, bytes.Length);
-            offset += bytes.Length;
+            offset += IdLength;
 
             bytes = BitConverter.GetBytes(DateOfBirth.Ticks);
             Buffer.BlockCopy(bytes, 0, array, offset, bytes.Length);
@@ -182,7 +182,8 @@ namespace SemestralThesisOne.Core.Model
 
             for (int i = 0; i < MaxHospitalizations; i++)
             {
-                if (hospitalizationsForFile[i] != null)
+
+                if (i < hospitalizationsForFile.Count && hospitalizationsForFile[i] != null)
                 {
                     bytes = hospitalizationsForFile[i]?.ToByteArray();
                 }
@@ -201,6 +202,7 @@ namespace SemestralThesisOne.Core.Model
         {
             hospitalizationsForFile = new List<Hospitalization?>(MaxHospitalizations);
             HospitalizationsEnded = new BinarySearchTree<string, Hospitalization>();
+
             byte[] data = new byte[FirstNameLength];
             int srcOffset = 0;
             Buffer.BlockCopy(array, srcOffset, data, 0, FirstNameLength);
@@ -218,7 +220,7 @@ namespace SemestralThesisOne.Core.Model
             srcOffset += IdLength;
 
             data = new byte[sizeof(long)];
-            Buffer.BlockCopy(array, srcOffset, data, 0, sizeof(int));
+            Buffer.BlockCopy(array, srcOffset, data, 0, sizeof(long));
             DateOfBirth = new DateTime(BitConverter.ToInt64(data));
             srcOffset += sizeof(long);
 
@@ -227,13 +229,19 @@ namespace SemestralThesisOne.Core.Model
             InsuranceCompanyCode = Enums.FromByte(data[0]);
             srcOffset += sizeof(byte);
 
-            Hospitalization hospitalization = new Hospitalization();
-            int sizeOfHospitalization = hospitalization.GetSize();
-            data = new byte[sizeOfHospitalization];
+            
             for (int i = 0; i < MaxHospitalizations; i++)
             {
+                Hospitalization hospitalization = new Hospitalization();
+                int sizeOfHospitalization = hospitalization.GetSize();
+                data = new byte[sizeOfHospitalization];
                 Buffer.BlockCopy(array, srcOffset, data, 0, sizeOfHospitalization);
                 hospitalization.FromByteArray(data);
+                if (hospitalization.IsEqual(new Hospitalization()))
+                {
+                    continue;
+                }
+
                 if (hospitalization.End == null)
                 {
                     SetCurrentHospitalization(hospitalization);
