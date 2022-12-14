@@ -65,9 +65,9 @@ namespace SemestralThesisOne.Core.ViewModel
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        public void AddHospitalizationToFile(string patientId,DateTime start, string diagnosis)
+        public void AddHospitalizationToFile(string patientId, DateTime start, string diagnosis)
         {
-            _patientsFile.AddCurrentHospitalization(patientId,start,diagnosis);
+            _patientsFile.AddCurrentHospitalization(patientId, start, diagnosis);
             MessageBox.Show($"Hospitalization added successfully", "Success",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -99,12 +99,35 @@ namespace SemestralThesisOne.Core.ViewModel
 
         public void RemoveHospitalization(string patientID, int hospitalizationId)
         {
-            _patientsFile.RemoveHospitalization(patientID,hospitalizationId);
+            _patientsFile.RemoveHospitalization(patientID, hospitalizationId);
         }
 
         public string GetAllBlockContentsFromFile()
         {
             return _patientsFile.GetAllBlockContents();
+        }
+
+        public Examination? FindExamination(int examinationID, string patientID)
+        {
+            return _patientsFile.FindExamination(examinationID, patientID);
+        }
+
+        public Examination RemoveExamination(int examinationID, string patientID)
+        {
+            return _patientsFile.RemoveExamination(examinationID, patientID);
+            
+        }
+        
+        public void AddExamination(Examination examination)
+        {
+            _patientsFile.AddExamination(examination);
+            MessageBox.Show($"Examination added", "Success",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public string GetExaminationsFromFile()
+        {
+            return _patientsFile.GetExaminations();
         }
     }
 }

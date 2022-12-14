@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using SemestralThesisOne.UserInterface;
 using SemestralThesisOne.UserInterface.App;
+using SemestralThesisOne.UserInterface.Examination;
 using SemestralThesisOne.UserInterface.Hospital;
 using SemestralThesisOne.UserInterface.Patient;
 
@@ -144,6 +145,12 @@ namespace SemestralThesisOne
         {
             GetBlockContentsWindow allBlockContentsWindow = new GetBlockContentsWindow(app.PatientManager);
             allBlockContentsWindow.ShowDialog();
+        }
+
+        private void Examinations_Click(object sender, RoutedEventArgs e)
+        {
+            ExaminationsWindow examinations = new ExaminationsWindow(app.PatientManager);
+            examinations.ShowDialog();
         }
     }
 }
