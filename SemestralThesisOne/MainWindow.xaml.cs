@@ -1,5 +1,7 @@
 ﻿using System.Windows;
+using SemestralThesisOne.UserInterface;
 using SemestralThesisOne.UserInterface.App;
+using SemestralThesisOne.UserInterface.Examination;
 using SemestralThesisOne.UserInterface.Hospital;
 using SemestralThesisOne.UserInterface.Patient;
 
@@ -44,13 +46,13 @@ namespace SemestralThesisOne
         private void StartHospitalization(object sender, RoutedEventArgs e)
         {
             AddHospitalizationWindow addHospitalization =
-                new AddHospitalizationWindow(app.HospitalManager);
+                new AddHospitalizationWindow(app.HospitalManager,app.PatientManager);
             addHospitalization.ShowDialog();
         }
 
         private void EndHospitalization(object sender, RoutedEventArgs e)
         {
-            EndHospitalizationWindow endHospitalization = new EndHospitalizationWindow(app.HospitalManager);
+            EndHospitalizationWindow endHospitalization = new EndHospitalizationWindow(app.HospitalManager, app.PatientManager);
             endHospitalization.ShowDialog();
         }
 
@@ -114,6 +116,7 @@ namespace SemestralThesisOne
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            app.PatientManager.SaveFile();
             app.HospitalManager.Save();
             MessageBox.Show($"Save complete", "Success",
                 MessageBoxButton.OK, MessageBoxImage.Information);
@@ -124,6 +127,30 @@ namespace SemestralThesisOne
             app.HospitalManager.Load(app.PatientManager);
             MessageBox.Show($"Load complete", "Success",
                 MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void InitializeFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitializeFile initializeFile = new InitializeFile(app.PatientManager);
+            initializeFile.ShowDialog();
+        }
+
+        private void FindPatientInFile_Click(object sender, RoutedEventArgs e)
+        {
+            FindPatientInFIle findInFile = new FindPatientInFIle(app.PatientManager);
+            findInFile.ShowDialog();
+        }
+
+        private void GetAllBlockContents_Click(object sender, RoutedEventArgs e)
+        {
+            GetBlockContentsWindow allBlockContentsWindow = new GetBlockContentsWindow(app.PatientManager);
+            allBlockContentsWindow.ShowDialog();
+        }
+
+        private void Examinations_Click(object sender, RoutedEventArgs e)
+        {
+            ExaminationsWindow examinations = new ExaminationsWindow(app.PatientManager);
+            examinations.ShowDialog();
         }
     }
 }

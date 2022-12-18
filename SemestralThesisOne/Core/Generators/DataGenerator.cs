@@ -28,7 +28,7 @@ namespace SemestralThesisOne.Core.Generators
 
         public static Hospitalization GenerateHospitalization()
         {
-            string diagnosis = StringGenerator.GenerateRandomString(5);
+            string diagnosis = StringGenerator.GenerateRandomString(20);
             DateTime start = DateTimeGenerator.GenerateRandomDateTime(new DateTime(1970, 1, 1), DateTime.Now);
             DateTime end = DateTimeGenerator.GenerateRandomDateTime(new DateTime(1970, 1, 1), DateTime.Now);
             return new Hospitalization(start, end, diagnosis);

@@ -1,11 +1,11 @@
-﻿<Window x:Class="SemestralThesisOne.UserInterface.Patient.EndHospitalizationWindow"
+﻿<Window x:Class="SemestralThesisOne.UserInterface.Examination.ExaminationsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SemestralThesisOne.UserInterface.Patient"
+        xmlns:local="clr-namespace:SemestralThesisOne.UserInterface.Examination"
         mc:Ignorable="d"
-        Title="EndHospitalizationWindow" Height="450" Width="800">
+        Title="Examinations" Height="450" Width="800">
     <Grid>
         <Grid.Resources>
             <Style TargetType="{x:Type Label}">
@@ -35,33 +35,37 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0">Hospital Name</Label>
-        <TextBox Grid.Row="0" Grid.Column="1" Name="HospitalNameTextBox"></TextBox>
+        <Label Grid.Column="0" Grid.Row="0">Examination ID</Label>
+        <TextBox Grid.Row="0" Grid.Column="1" Name="ExaminationIdTextBox"></TextBox>
 
         <Label Grid.Column="0" Grid.Row="1">Patient ID</Label>
         <TextBox Grid.Row="1" Grid.Column="1" Name="PatientIdTextBox"></TextBox>
 
-        <Label Grid.Column="0" Grid.Row="2">Hospitalization End</Label>
-        <DatePicker Grid.Row="2" Grid.Column="1" Name="HospitalizationEndDatePicker"></DatePicker>
+        <Label Grid.Column="0" Grid.Row="2">Value</Label>
+        <TextBox Grid.Row="2" Grid.Column="1" Name="ValueTextBox"></TextBox>
+
+        <Label Grid.Column="0" Grid.Row="3">Description</Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Name="DescriptionTextBox"></TextBox>
 
         <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Name="FindButton" Click="FindButton_OnClick" IsDefault="True">Find</Button>
             <Button Name="CancelButton" IsCancel="True">Cancel</Button>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Name="AddEndButton" Click="AddEndButton_OnClickButton_OnClick" IsDefault="True">End Hospitalization</Button>
-        </StackPanel>
-        
         <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Name="FindInFileButton" Click="FindInFileButton_OnClick" IsDefault="True">Find In File</Button>
-            <Button Name="AddEndToFileButton" Click="AddEndToFileButton_OnClickButton_OnClick" IsDefault="True">End File Hospitalization</Button>
+            <Button Name="AddButton" Click="AddButton_OnClick" IsDefault="True">Add</Button>
+            <Button Name="RemoveButton" Click="RemoveButton_OnClickButton_OnClick" IsDefault="True">Remove</Button>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Height="285" CanContentScroll="True" Margin="5,0,0,0">
-            <TextBlock TextWrapping="Wrap" Name="PatientsTextBlock"></TextBlock>
+        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Name="ContentsButton" Click="ContentsButton_OnClick" IsDefault="True">Contents</Button>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Height="285" CanContentScroll="True" Margin="5,0,0,0">
+            <TextBlock TextWrapping="Wrap" Name="ExaminationTextBlock"></TextBlock>
         </ScrollViewer>
     </Grid>
 </Window>

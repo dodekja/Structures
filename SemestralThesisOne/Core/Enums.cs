@@ -40,5 +40,15 @@ namespace SemestralThesisOne.Core
                     throw new ArgumentOutOfRangeException(nameof(insuranceCompany), insuranceCompany, "Invalid insurance company name provided.");
             }
         }
+
+        public static byte GetByte(InsuranceCompanyCodes code)
+        {
+            return (byte)code;
+        }
+
+        public static InsuranceCompanyCodes FromByte(byte code)
+        {
+            return (InsuranceCompanyCodes)code;
+        }
     }
 }

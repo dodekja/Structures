@@ -196,11 +196,11 @@
                 {
                     if (child.IsLeftSon())
                     {
-                        parent.LeftSubtreeHeight--;
+                        parent.LeftSubtreeSize--;
                     }
                     else
                     {
-                        parent.RightSubtreeHeight--;
+                        parent.RightSubtreeSize--;
                     }
                     if (balance)
                     {
@@ -251,11 +251,11 @@
             {
                 if (childNode.IsLeftSon())
                 {
-                    parent.LeftSubtreeHeight--;
+                    parent.LeftSubtreeSize--;
                 }
                 else
                 {
-                    parent.RightSubtreeHeight--;
+                    parent.RightSubtreeSize--;
                 }
                 if (balance)
                 {
@@ -551,7 +551,7 @@
                     node.Parent = null;
                 }
 
-                node.LeftSubtreeHeight = parent.LeftSubtreeHeight + parent.RightSubtreeHeight + 1;
+                node.LeftSubtreeSize = parent.LeftSubtreeSize + parent.RightSubtreeSize + 1;
             }
         }
 
@@ -583,7 +583,7 @@
                     node.Parent = null;
                 }
 
-                node.RightSubtreeHeight = parent.LeftSubtreeHeight + parent.RightSubtreeHeight + 1;
+                node.RightSubtreeSize = parent.LeftSubtreeSize + parent.RightSubtreeSize + 1;
             }
         }
 

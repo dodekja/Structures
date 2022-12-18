@@ -11,13 +11,15 @@ namespace SemestralThesisOne.UserInterface.Patient
     public partial class EndHospitalizationWindow : Window
     {
         private HospitalManager _hospitalManager;
+        private PatientManager _patientManager;
         private Core.Model.Patient? _patient;
 
-        public EndHospitalizationWindow(HospitalManager hospitalManager)
+        public EndHospitalizationWindow(HospitalManager hospitalManager, PatientManager patientManager)
         {
             InitializeComponent();
             _hospitalManager = hospitalManager;
             _patient = null;
+            _patientManager = patientManager;
         }
 
         private void FindButton_OnClick(object sender, RoutedEventArgs e)
@@ -63,6 +65,56 @@ namespace SemestralThesisOne.UserInterface.Patient
             else
             {
                 MessageBox.Show("Patient not loaded.", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void AddEndToFileButton_OnClickButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            PatientsTextBlock.Text = "";
+            if (_patient.IsHospitalized())
+            {
+                DateTime dateTime = HospitalizationEndDatePicker.SelectedDate.Value;
+                dateTime = DateTimeGenerator.AddRandomTime(dateTime);
+                try
+                {
+                    _patientManager.EndCurrentHospitalizationInFile(_patient.IdentificationNumber, dateTime);
+                }
+                catch (InvalidOperationException exception)
+                {
+                    MessageBox.Show($"{exception.Message}", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+                PatientsTextBlock.Text = _patient + "\n";
+            }
+            else
+            {
+                MessageBox.Show("Patient is not hospitalized", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+        }
+
+        private void FindInFileButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            PatientsTextBlock.Text = "";
+            try
+            {
+                _patient = _patientManager.GetPatientFromFile(PatientIdTextBox.Text);
+                if (_patient != null)
+                {
+                    PatientsTextBlock.Text = _patient + "\n";
+                }
+                else
+                {
+                    MessageBox.Show($"Patient with ID: {PatientIdTextBox.Text} was not found in hospital {HospitalNameTextBox.Text}", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
